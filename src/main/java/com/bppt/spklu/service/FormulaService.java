@@ -1,14 +1,209 @@
 package com.bppt.spklu.service;
 
+import com.bppt.spklu.constant.FormulaEnum;
+import com.bppt.spklu.model.CalculateParameter;
+import com.bppt.spklu.model.MainParameter;
+import com.bppt.spklu.model.ResponseCalculate;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.util.NumberToTextConverter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
+import java.util.stream.Stream;
 
 @Slf4j
+@Service
 public class FormulaService {
+
+    @Autowired
+    private ParameterService ps;
+
+    public ResponseCalculate genFormula(CalculateParameter cp) {
+        List<MainParameter> l = ps.getParameters();
+
+        Double jkfev = Double.parseDouble(cp.getKondisiEkonomi().getJumlahKendaraanInisial()); //600.0; // Jumlah Kendaraan Full EV pada tahun baseline
+        Double pkl = Double.parseDouble(ps.getParam(l, FormulaEnum.pkl)); //1.0; // param ? Populasi Kendaraan Listrik
+        Double ptkev = Double.parseDouble(cp.getParameterBisnis().getPertumbuhanKblPerTahun()) / 100; //0.23; // Pertumbuhan Tahunan Kendaraan EV
+
+        Integer stYear = Integer.parseInt(cp.getYears().getStartYear()); //2020;
+        Integer edYear = Integer.parseInt(cp.getYears().getFinishYear()); //2030;
+        List<Double> yearRes = new ArrayList<>(); // tahun 2020, 2021, 2022, ...
+        for (Integer i = stYear; i <= edYear; i+=1) {
+            yearRes.add(Double.parseDouble(i + ""));
+        }
+        List<Double> yearToRes = new ArrayList<>(); // tahun ke 0, 1, 2, ...
+        Double yt = 0.0;
+        for (Integer i = stYear; i <= edYear; i+=1) {
+            yearToRes.add(yt);
+            yt += 1;
+        }
+        int length = yearToRes.size() - 1; //10; // range year 0 - 10 => 11
+
+        Double rsbb = Double.parseDouble(cp.getParameterBisnis().getRasioSpklu()); //38.0; // Rasio SPKLU Banding BEV, 1:N
+
+        Double hs = Double.parseDouble(cp.getKondisiEkonomi().getBiayaSpklu()); //800000000.0; // Harga 1 SPKLU
+        Double ieikAdd = Double.parseDouble(ps.getParam(l, FormulaEnum.ieikAdd)); //550000.0; // param Infrastructure Expense (in kIDR)
+        Double ieikDiv = Double.parseDouble(ps.getParam(l, FormulaEnum.ieikDiv)); //1000.0; // param Infrastructure Expense (in kIDR)
+
+        Double bo = Double.parseDouble(ps.getParam(l, FormulaEnum.bo)); //0.02; // param Biaya Operasional *)
+        Double bsl = 0.0; // Biaya Sewa Lahan TODO
+
+        Double bp = Double.parseDouble(ps.getParam(l, FormulaEnum.bp)); //0.02; // param Biaya Pemasaran
+
+        Double btt = Double.parseDouble(ps.getParam(l, FormulaEnum.btt)); //100000.0; // param Biaya Tak Terduga
+
+        Double kpkl = Double.parseDouble(cp.getParameterTeknis().getKapasitasKbl()); //25.0; // Kapasitas pengisian 1 kendaraan listrik (kWh)
+        Double keh = Double.parseDouble(ps.getParam(l, FormulaEnum.keh)); //1.0; // param Kebutuhan Energi harian (KWH)
+        Double rdkdp = Double.parseDouble(cp.getParameterTeknis().getRugiDayaPendukung()) / 100; //0.1; // Rugi-rugi dan kebutuhan daya pendukung
+
+        Double heMtp = Double.parseDouble(ps.getParam(l, FormulaEnum.heMtp)); //0.707; // param ? Harga Energi (Rp/KwH)
+        Double rhblp = Double.parseDouble(cp.getParameterBisnis().getHargaJualPln()); //1.2; // Rasio harga beli listrik PLN (Q, Rp 707 x Q)
+        Double heMin = Double.parseDouble(ps.getParam(l, FormulaEnum.heMin)); //1.0; // param ? Harga Energi (Rp/KwH)
+        Double sep = 0.0; // Subsidi energi Persen TODO
+        Double heMtpN = Double.parseDouble(ps.getParam(l, FormulaEnum.heMtpN)); //0.035; // param ? Harga Energi (Rp/KwH)
+
+        Double bet = Double.parseDouble(ps.getParam(l, FormulaEnum.bet)); //365.0; // param Biaya Energy Tahunan
+
+        Double bos = Double.parseDouble(ps.getParam(l, FormulaEnum.bos)); //57600.0; // param Biaya Operasi SPKLU, Gaji Pegawai Pertahun
+
+        Double jkhev = 0.0; // Jumlah Kendaraan Hybrid EV pada tahun baseline TODO
+        Double pkhg = Double.parseDouble(ps.getParam(l, FormulaEnum.pkhg)); //1.0; // param ? Populasi Kendaraan Hybrid (Gaikindo)
+        Double ptkhev = 0.0; // Pertumbuhan Tahunan Kendaraan Hybrid EV TODO
+
+        Double bc = Double.parseDouble(ps.getParam(l, FormulaEnum.bc)); //1.65; // param ? Biaya Charging
+        Double rhjls = Double.parseDouble(cp.getParameterBisnis().getHargaJualKonsumen()); //1.5; // Rasio harga jual listrik SPKLU (N, Rp 1650 x N)
+
+        Double fcfeph = 1.0; // Frekuensi charging Full EV per hari
+
+        Double fcheph = 0.0; // Frekuensi charging Hybrid EV per hari
+
+        Double tei = Double.parseDouble(ps.getParam(l, FormulaEnum.tei)); //1.0; // param Total Expense (inflated)
+        Double ir = Double.parseDouble(cp.getKondisiEkonomi().getInflasi()) / 100; //0.035; // Inflation Rate
+
+        Double pl = Double.parseDouble(ps.getParam(l, FormulaEnum.pl)); //365.0; // param Pendapatan Layanan
+
+        Double ri = Double.parseDouble(ps.getParam(l, FormulaEnum.ri)); //1.0; // param Revenue (inflated)
+
+        Double tax = Double.parseDouble(cp.getKondisiEkonomi().getPph()) / 100; //0.25; // Tax
+
+        Double dcs = Double.parseDouble(ps.getParam(l, FormulaEnum.dcs)); //1.0; // param Discounted Cash Flow
+        Double dr = Double.parseDouble(cp.getKondisiEkonomi().getDiscountRate()) / 100; //0.13; // Discount Rate
+
+        Double pi = Double.parseDouble(ps.getParam(l, FormulaEnum.pi)); //0.05; // param Profitability Index
+
+        Double bep = Double.parseDouble(ps.getParam(l, FormulaEnum.bep)); //1.0; // param Break Event Point (BEP)
+
+        List<Double> pklRes = pklRes(jkfev, pkl, ptkev, length);
+        List<Double> jsRes = jsRes(pkl, rsbb, pklRes);
+        List<Double> sbRes = sbRes(jsRes);
+        List<Double> ieikRes = ieikRes(sbRes, hs, ieikAdd, ieikDiv);
+
+        List<Double> boRes = boRes(bo, ieikRes, bsl, jsRes);
+        List<Double> bpRes = bpRes(bp, ieikRes);
+        List<Double> bttRes = bttRes(btt, length);
+        List<Double> kehRes = kehRes(jsRes, rsbb, kpkl, keh, rdkdp);
+        List<Double> heRes = heRes(heMtp, rhblp, heMin, sep, heMtpN, length);
+        List<Double> betRes = betRes(kehRes, heRes, bet);
+        List<Double> bosRes = bosRes(jsRes, bos);
+
+        List<Double> pkhgRes = pkhgRes(jkhev, pkhg, ptkhev, length);
+        List<Double> bcRes = bcRes(kpkl, bc, rhjls, length);
+        List<Double> fcfehRes = fcfehRes(fcfeph, length);
+        List<Double> fchhRes = fchhRes(fcheph, length);
+        List<Double> teiRes = teiRes(ieikRes, boRes, bpRes, bttRes, betRes, bosRes, tei, yearRes, ir);
+        List<Double> plRes = plRes(pklRes, bcRes, fcfehRes, pkhgRes, fchhRes, pl);
+        List<Double> pkRes = new ArrayList<>();
+        for (int i = 0; i <= length; i++) {
+            pkRes.add(0.0);
+        }
+        List<Double> riRes = riRes(pkRes, plRes, ri, yearRes, ir);
+        List<Double> gpikRes = gpikRes(teiRes, plRes);
+        List<Double> taxRes = taxRes(gpikRes, tax);
+        List<Double> csRes = csRes(gpikRes, taxRes);
+        List<Double> dcsRes = dcsRes(csRes, dcs, dr, yearToRes);
+        List<Double> cfRes = cfRes(csRes, dcsRes);
+        List<Double> ppParamRes = ppParamRes(cfRes);
+
+        double[] csResD = new double[csRes.size()];
+        for (int i = 0; i < csRes.size(); i++) {
+            csResD[i] = csRes.get(i);
+        }
+
+        double npvRes = FormulaService.npv(dr, csResD);
+        log.info("npvRes={}", FormulaService.round(npvRes, 0));
+
+        double irrRes = FormulaService.irr(csResD);
+        log.info("irrRes={}", FormulaService.round(irrRes, 2));
+
+        double mirrRes = FormulaService.mirr(csResD, 0, 0);
+        log.info("mirrRes={}", FormulaService.round(mirrRes, 2));
+
+        Double fbeRes = fbeRes(cfRes);
+        log.info("fbeRes={}", FormulaService.round(fbeRes, 3));
+
+        Double llRes = llRes(cfRes);
+        log.info("llRes={}", FormulaService.round(llRes, 4));
+
+        Double lyRes = lyRes(ppParamRes);
+        log.info("lyRes={}", FormulaService.round(lyRes, 0));
+
+        Double pprdRes = pprdRes(fbeRes, llRes, lyRes);
+        log.info("pprdRes={}", FormulaService.round(pprdRes, 2));
+
+        Double piRes = piRes(pi, riRes, teiRes, length);
+        log.info("piRes={}", FormulaService.round(piRes, 2));
+
+        Double bepRes = bepRes(ieikRes, boRes, bpRes, bttRes, betRes, bosRes, plRes, bep);
+        log.info("bepRes={}", FormulaService.round(bepRes, 2));
+
+        ResponseCalculate rc = new ResponseCalculate();
+        rc.setYear(yearRes.stream().map(e -> String.format("%.0f", round(e, 2))).collect(Collectors.toList()));
+        rc.setYearTo(yearToRes.stream().map(e -> String.format("%.0f", round(e, 2))).collect(Collectors.toList()));
+        rc.setPkl(pklRes.stream().map(e -> String.format("%.2f", round(e, 2))).collect(Collectors.toList()));
+        rc.setJs(jsRes.stream().map(e -> String.format("%.2f", round(e, 2))).collect(Collectors.toList()));
+        rc.setSb(sbRes.stream().map(e -> String.format("%.2f", round(e, 2))).collect(Collectors.toList()));
+        rc.setIeik(ieikRes.stream().map(e -> String.format("%.2f", round(e, 2))).collect(Collectors.toList()));
+        rc.setBo(boRes.stream().map(e -> String.format("%.2f", round(e, 2))).collect(Collectors.toList()));
+        rc.setBp(bpRes.stream().map(e -> String.format("%.2f", round(e, 2))).collect(Collectors.toList()));
+        rc.setBtt(bttRes.stream().map(e -> String.format("%.2f", round(e, 2))).collect(Collectors.toList()));
+        rc.setKeh(kehRes.stream().map(e -> String.format("%.2f", round(e, 2))).collect(Collectors.toList()));
+        rc.setHe(heRes.stream().map(e -> String.format("%.2f", round(e, 2))).collect(Collectors.toList()));
+        rc.setBet(betRes.stream().map(e -> String.format("%.2f", round(e, 2))).collect(Collectors.toList()));
+        rc.setBos(bosRes.stream().map(e -> String.format("%.2f", round(e, 2))).collect(Collectors.toList()));
+        rc.setPkhg(pkhgRes.stream().map(e -> String.format("%.2f", round(e, 2))).collect(Collectors.toList()));
+        rc.setBc(bcRes.stream().map(e -> String.format("%.2f", round(e, 2))).collect(Collectors.toList()));
+        rc.setFcfeh(fcfehRes.stream().map(e -> String.format("%.2f", round(e, 2))).collect(Collectors.toList()));
+        rc.setFchh(fchhRes.stream().map(e -> String.format("%.2f", round(e, 2))).collect(Collectors.toList()));
+        rc.setTei(teiRes.stream().map(e -> String.format("%.2f", round(e, 2))).collect(Collectors.toList()));
+        rc.setPl(plRes.stream().map(e -> String.format("%.2f", round(e, 2))).collect(Collectors.toList()));
+        rc.setPk(pkRes.stream().map(e -> String.format("%.2f", round(e, 2))).collect(Collectors.toList()));
+        rc.setRi(riRes.stream().map(e -> String.format("%.2f", round(e, 2))).collect(Collectors.toList()));
+        rc.setGpik(gpikRes.stream().map(e -> String.format("%.2f", round(e, 2))).collect(Collectors.toList()));
+        rc.setTax(taxRes.stream().map(e -> String.format("%.2f", round(e, 2))).collect(Collectors.toList()));
+        rc.setCs(csRes.stream().map(e -> String.format("%.2f", round(e, 2))).collect(Collectors.toList()));
+        rc.setDcs(dcsRes.stream().map(e -> String.format("%.2f", round(e, 2))).collect(Collectors.toList()));
+        rc.setCf(cfRes.stream().map(e -> String.format("%.2f", round(e, 2))).collect(Collectors.toList()));
+        rc.setPpParam(ppParamRes.stream().map(e -> String.format("%.0f", round(e, 2))).collect(Collectors.toList()));
+
+        rc.setNpv(String.format("%.0f", round(npvRes, 2)));
+        rc.setIrr(String.format("%.0f", (round(irrRes, 2) * 100)) + "%");
+        rc.setMirr(String.format("%.0f", (round(mirrRes, 2) * 100)) + "%");
+        rc.setFbe(String.format("%.3f", round(fbeRes, 3)));
+        rc.setLl(String.format("%.4f", round(llRes, 4)));
+        rc.setLy(String.format("%.0f", round(lyRes, 2)));
+        rc.setPprd(String.format("%.2f", round(pprdRes, 2)));
+        rc.setPi(String.format("%.2f", round(piRes, 2)));
+        rc.setBep(String.format("%.2f", round(bepRes, 2)));
+
+        return rc;
+    }
 
     // Infrastructure Expense (in kIDR)
     public List<Double> ieikRes(List<Double> sbRes, Double hs, Double ieikAdd, Double ieikDiv) {
@@ -206,6 +401,24 @@ public class FormulaService {
         return result;
     }
 
+    // Revenue (inflated)
+    public List<Double> riRes(List<Double> pkRes, List<Double> plRes, Double ri, List<Double> yearRes, Double ir) {
+        List<Double> result = new ArrayList<>();
+        for (int i = 0; i <= (plRes.size() - 1); i++) {
+            Double d = 0.0;
+            if (i == 0) {
+                d = Arrays.asList(pkRes.get(0), plRes.get(0)).stream().mapToDouble(e -> e).sum();
+            } else {
+                Double sum = Arrays.asList(pkRes.get(i),
+                        plRes.get(i)
+                ).stream().mapToDouble(e -> e).sum();
+                d = sum * (ri + (yearRes.get(i) - yearRes.get(0)) * ir);
+            }
+            result.add(d);
+        }
+        return result;
+    }
+
     // Gross Profit (In kIDR)
     public List<Double> gpikRes(List<Double> teiRes, List<Double> plRes) {
         List<Double> result = new ArrayList<>();
@@ -295,19 +508,29 @@ public class FormulaService {
         return lyRes + abs(llRes) / (fbeRes - llRes);
     }
 
-//    public Double piRes(Double fbeRes, Double llRes, Double lyRes) {
-//        return lyRes + abs(llRes) / (fbeRes - llRes);
-//    }
-
-
-
-
-
-    public List<Double> xx_ON(List<Double> Res) {
-        List<Double> result = new ArrayList<>();
-        return result;
+    // Profitability Index
+    public Double piRes(Double pi, List<Double> riRes, List<Double> teiRes, int length) {
+        double[] riResD = new double[riRes.size()];
+        for (int i = 0; i < riRes.size(); i++) {
+            riResD[i] = riRes.get(i);
+        }
+        double[] teiResD = new double[teiRes.size()];
+        for (int i = 0; i < teiRes.size(); i++) {
+            teiResD[i] = teiRes.get(i);
+        }
+        return abs(npv(pi, riResD) / npv(pi, teiResD));
     }
 
+    // Break Event Point (BEP)
+    public Double bepRes(List<Double> ieikRes, List<Double> boRes, List<Double> bpRes, List<Double> bttRes,
+                         List<Double> betRes, List<Double> bosRes, List<Double> plRes, Double bep) {
+        double ieikSum = ieikRes.stream().mapToDouble(e -> e).sum();
+        double bSum = Stream.of(boRes, bpRes, bttRes).flatMap(Collection::stream).mapToDouble(e -> e).sum();
+        double betSum = betRes.stream().mapToDouble(e -> e).sum();
+        double bosSum = bosRes.stream().mapToDouble(e -> e).sum();
+        double plSum = plRes.stream().mapToDouble(e -> e).sum();
+        return abs(ieikSum) / (bep - (abs(bSum) + abs(betSum) + abs(bosSum)) / abs(plSum));
+    }
 
     // excel function
 
