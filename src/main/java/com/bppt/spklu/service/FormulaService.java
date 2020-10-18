@@ -53,7 +53,7 @@ public class FormulaService {
         Double ieikDiv = Double.parseDouble(ps.getParam(l, FormulaEnum.ieikDiv)); //1000.0; // param Infrastructure Expense (in kIDR)
 
         Double bo = Double.parseDouble(ps.getParam(l, FormulaEnum.bo)); //0.02; // param Biaya Operasional *)
-        Double bsl = 0.0; // Biaya Sewa Lahan TODO
+        Double bsl = Double.parseDouble(cp.getParameterBisnis().getBiayaSewaLahan()); //0.0; // Biaya Sewa Lahan TODO
 
         Double bp = Double.parseDouble(ps.getParam(l, FormulaEnum.bp)); //0.02; // param Biaya Pemasaran
 
@@ -80,9 +80,9 @@ public class FormulaService {
         Double bc = Double.parseDouble(ps.getParam(l, FormulaEnum.bc)); //1.65; // param ? Biaya Charging
         Double rhjls = Double.parseDouble(cp.getParameterBisnis().getHargaJualKonsumen()); //1.5; // Rasio harga jual listrik SPKLU (N, Rp 1650 x N)
 
-        Double fcfeph = 1.0; // Frekuensi charging Full EV per hari
+        Double fcfeph = 1.0; // Frekuensi charging Full EV per hari TODO
 
-        Double fcheph = 0.0; // Frekuensi charging Hybrid EV per hari
+        Double fcheph = 0.0; // Frekuensi charging Hybrid EV per hari TODO
 
         Double tei = Double.parseDouble(ps.getParam(l, FormulaEnum.tei)); //1.0; // param Total Expense (inflated)
         Double ir = Double.parseDouble(cp.getKondisiEkonomi().getInflasi()) / 100; //0.035; // Inflation Rate
@@ -277,10 +277,10 @@ public class FormulaService {
     }
 
     // ? Jumlah SPKLU*brp sebenarnya (10% dari jumlah BEV)
-    public List<Double> jsRes(Double pkl, Double rsbb, List<Double> pklRes) {
+    public List<Double> jsRes(Double js, Double rsbb, List<Double> pklRes) {
         List<Double> result = new ArrayList<>();
         for (Double val : pklRes) {
-            Double d = floor(pkl / rsbb * val, 1);
+            Double d = floor(js / rsbb * val, 1);
             result.add(d);
         }
         return result;
@@ -395,7 +395,7 @@ public class FormulaService {
                               List<Double> fcfehRes, List<Double> pkhgRes, List<Double> fchhRes, Double pl) {
         List<Double> result = new ArrayList<>();
         for (int i = 0; i <= (pklRes.size() - 1); i++) {
-            Double d = pklRes.get(i) * bcRes.get(i) * fcfehRes.get(i) * pl + pkhgRes.get(i) * bcRes.get(i) * fchhRes.get(i) * pl;
+            Double d = pklRes.get(i) * bcRes.get(i) * fcfehRes.get(i) * pl; // + pkhgRes.get(i) * bcRes.get(i) * fchhRes.get(i) * pl;
             result.add(d);
         }
         return result;

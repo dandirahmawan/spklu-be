@@ -9,5 +9,7 @@ public class ReqParameterBisnis {
     private String hargaJualKonsumen;
     private String pertumbuhanKblPerTahun;
     private String rasioSpklu;
+    private String biayaSewaLahan;
+    private String penggunaanEvsePerJam;
 
 }

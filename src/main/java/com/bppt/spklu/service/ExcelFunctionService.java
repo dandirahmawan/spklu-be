@@ -23,19 +23,25 @@ public class ExcelFunctionService {
      */
     public Cell createCell(Sheet sheet, int rowNum, int colNum, ExcelService.MergeRowCol mergeCell, CellStyle cellStyle, Integer size) {
         if (mergeCell != null) {
-            CellRangeAddress cellRange =
-                    new CellRangeAddress(rowNum - 1, mergeCell.getLastRow() - 1,
-                            colNum - 1, mergeCell.getLastCol() - 1);
+            CellRangeAddress cellRange = getCellRangeAddressByNumber(rowNum, mergeCell.getLastRow(), colNum, mergeCell.getLastCol());
+//                    new CellRangeAddress(rowNum - 1, mergeCell.getLastRow() - 1,
+//                            colNum - 1, mergeCell.getLastCol() - 1);
             sheet.addMergedRegion(cellRange);
         }
 
         Row row = sheet.getRow(rowNum - 1);
         if (row == null) row = sheet.createRow(rowNum - 1);
 
-        Cell cell = row.createCell(colNum - 1);
+        Cell cell = row.getCell(colNum - 1);
+        if (cell == null) cell = row.createCell(colNum - 1);
         if (cellStyle != null) cell.setCellStyle(cellStyle);
         if (size != null) sheet.setColumnWidth(colNum - 1, size);
         return cell; // new SheetCell(sheet, cell);
+    }
+
+    public CellRangeAddress getCellRangeAddressByNumber(int firstRow, int lastRow, int firstCol, int lastCol) {
+        return new CellRangeAddress(firstRow - 1, lastRow - 1,
+                firstCol - 1, lastCol - 1);
     }
 
     public CellStyle cellStyle(Workbook workbook, boolean center, boolean bold, Short indexedCellColors, Short indexedFontColors) {
