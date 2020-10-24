@@ -38,6 +38,8 @@ public enum FormulaEnum {
 
     bep, // param Break Event Point (BEP)
 
+    dirTemp,
+
 
 //    Double jkfev = 600.0; // Jumlah Kendaraan Full EV pada tahun baseline
 //    Double pkl = 1.0; // param ? Populasi Kendaraan Listrik

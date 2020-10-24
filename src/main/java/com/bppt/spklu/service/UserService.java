@@ -1,6 +1,6 @@
 package com.bppt.spklu.service;
 
-import com.bppt.spklu.model.MainUser;
+import com.bppt.spklu.entity.MainUser;
 import com.bppt.spklu.model.ResponseRest;
 import com.bppt.spklu.repo.MainUserRepo;
 import org.springframework.beans.factory.annotation.Autowired;

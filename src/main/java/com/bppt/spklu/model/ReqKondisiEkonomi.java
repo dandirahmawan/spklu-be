@@ -10,5 +10,6 @@ public class ReqKondisiEkonomi {
     private String discountRate;
     private String jumlahKendaraanInisial;
     private String biayaSpklu;
+    private String biayaInvestasiLahan;
 
 }

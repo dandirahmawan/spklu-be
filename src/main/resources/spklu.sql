@@ -11,11 +11,45 @@
  Target Server Version : 100137
  File Encoding         : 65001
 
- Date: 10/10/2020 18:54:41
+ Date: 24/10/2020 19:08:21
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for main_form_value
+-- ----------------------------
+DROP TABLE IF EXISTS `main_form_value`;
+CREATE TABLE `main_form_value`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `create_date` datetime(0) NULL DEFAULT NULL,
+  `update_date` datetime(0) NULL DEFAULT NULL,
+  `name` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
+  `value` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
+  `description` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 18 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
+
+-- ----------------------------
+-- Records of main_form_value
+-- ----------------------------
+INSERT INTO `main_form_value` VALUES (1, NULL, NULL, 'pph', '25', NULL);
+INSERT INTO `main_form_value` VALUES (2, NULL, NULL, 'inflasi', '3.5', NULL);
+INSERT INTO `main_form_value` VALUES (3, NULL, NULL, 'discount_rate', '13', NULL);
+INSERT INTO `main_form_value` VALUES (4, NULL, NULL, 'jumlah_kendaraan', '600', NULL);
+INSERT INTO `main_form_value` VALUES (5, NULL, NULL, 'biaya_sipil', '150000000', NULL);
+INSERT INTO `main_form_value` VALUES (6, NULL, NULL, 'biaya_kelistrikan', '400000000', NULL);
+INSERT INTO `main_form_value` VALUES (7, NULL, NULL, 'harga_evse', '800000000', NULL);
+INSERT INTO `main_form_value` VALUES (8, NULL, NULL, 'harga_jual_pln', '1.2', NULL);
+INSERT INTO `main_form_value` VALUES (9, NULL, NULL, 'harga_jual_konsumen', '1.5', NULL);
+INSERT INTO `main_form_value` VALUES (10, NULL, NULL, 'pertumbuhan_kbl', '23', NULL);
+INSERT INTO `main_form_value` VALUES (11, NULL, NULL, 'durasi_penggunaan_evse', '20', NULL);
+INSERT INTO `main_form_value` VALUES (12, NULL, NULL, 'biaya_sewa_lahan', '0', NULL);
+INSERT INTO `main_form_value` VALUES (13, NULL, NULL, 'jumlah_konektor', NULL, NULL);
+INSERT INTO `main_form_value` VALUES (14, NULL, NULL, 'daya_maksimum_konektor', NULL, NULL);
+INSERT INTO `main_form_value` VALUES (15, NULL, NULL, 'kapasitas_kbl', '25', NULL);
+INSERT INTO `main_form_value` VALUES (16, NULL, NULL, 'rugi_dan_daya_pendukung', '10', NULL);
 
 -- ----------------------------
 -- Table structure for main_parameter
@@ -31,7 +65,7 @@ CREATE TABLE `main_parameter`  (
   `description` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `id`(`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
+) ENGINE = InnoDB AUTO_INCREMENT = 22 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
 
 -- ----------------------------
 -- Records of main_parameter
@@ -56,6 +90,7 @@ INSERT INTO `main_parameter` VALUES (17, NULL, NULL, 'ri', '1.0', 'double', 'par
 INSERT INTO `main_parameter` VALUES (18, NULL, NULL, 'dcs', '1.0', 'double', 'param Discounted Cash Flow');
 INSERT INTO `main_parameter` VALUES (19, NULL, NULL, 'pi', '0.05', 'double', 'param Profitability Index');
 INSERT INTO `main_parameter` VALUES (20, NULL, NULL, 'bep', '1.0', 'double', 'param Break Event Point (BEP)');
+INSERT INTO `main_parameter` VALUES (21, NULL, NULL, 'dirTemp', '/tmp/com.bppt.spklu/', 'String', 'location save temp file');
 
 -- ----------------------------
 -- Table structure for main_status
@@ -91,5 +126,19 @@ CREATE TABLE `main_user`  (
   INDEX `status_id`(`status_id`) USING BTREE,
   CONSTRAINT `main_user_ibfk_1` FOREIGN KEY (`status_id`) REFERENCES `main_status` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
+
+-- ----------------------------
+-- Table structure for tran_tracking
+-- ----------------------------
+DROP TABLE IF EXISTS `tran_tracking`;
+CREATE TABLE `tran_tracking`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `create_date` datetime(0) NULL DEFAULT NULL,
+  `ip_address` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
+  `request_uri` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
+  `request_body` longtext CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL,
+  `user` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Compact;
 
 SET FOREIGN_KEY_CHECKS = 1;

@@ -1,19 +1,18 @@
-package com.bppt.spklu.model;
+package com.bppt.spklu.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 import java.util.Date;
 
 @Data
 @MappedSuperclass
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
-public class BaseModel {
+public class BaseEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @Column(name = "create_date")
     private Date createDate;

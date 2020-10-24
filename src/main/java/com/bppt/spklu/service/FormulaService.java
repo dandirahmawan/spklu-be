@@ -2,20 +2,18 @@ package com.bppt.spklu.service;
 
 import com.bppt.spklu.constant.FormulaEnum;
 import com.bppt.spklu.model.CalculateParameter;
-import com.bppt.spklu.model.MainParameter;
+import com.bppt.spklu.entity.MainParameter;
 import com.bppt.spklu.model.ResponseCalculate;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.util.NumberToTextConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -49,7 +47,7 @@ public class FormulaService {
         Double rsbb = Double.parseDouble(cp.getParameterBisnis().getRasioSpklu()); //38.0; // Rasio SPKLU Banding BEV, 1:N
 
         Double hs = Double.parseDouble(cp.getKondisiEkonomi().getBiayaSpklu()); //800000000.0; // Harga 1 SPKLU
-        Double ieikAdd = Double.parseDouble(ps.getParam(l, FormulaEnum.ieikAdd)); //550000.0; // param Infrastructure Expense (in kIDR)
+        Double ieikAdd = Double.parseDouble(cp.getKondisiEkonomi().getBiayaInvestasiLahan()) / 1000; //Double.parseDouble(ps.getParam(l, FormulaEnum.ieikAdd)); //550000.0; // param Infrastructure Expense (in kIDR)
         Double ieikDiv = Double.parseDouble(ps.getParam(l, FormulaEnum.ieikDiv)); //1000.0; // param Infrastructure Expense (in kIDR)
 
         Double bo = Double.parseDouble(ps.getParam(l, FormulaEnum.bo)); //0.02; // param Biaya Operasional *)
@@ -137,31 +135,31 @@ public class FormulaService {
         }
 
         double npvRes = FormulaService.npv(dr, csResD);
-        log.info("npvRes={}", FormulaService.round(npvRes, 0));
+//        log.info("npvRes={}", FormulaService.round(npvRes, 0));
 
         double irrRes = FormulaService.irr(csResD);
-        log.info("irrRes={}", FormulaService.round(irrRes, 2));
+//        log.info("irrRes={}", FormulaService.round(irrRes, 2));
 
         double mirrRes = FormulaService.mirr(csResD, 0, 0);
-        log.info("mirrRes={}", FormulaService.round(mirrRes, 2));
+//        log.info("mirrRes={}", FormulaService.round(mirrRes, 2));
 
         Double fbeRes = fbeRes(cfRes);
-        log.info("fbeRes={}", FormulaService.round(fbeRes, 3));
+//        log.info("fbeRes={}", FormulaService.round(fbeRes, 3));
 
         Double llRes = llRes(cfRes);
-        log.info("llRes={}", FormulaService.round(llRes, 4));
+//        log.info("llRes={}", FormulaService.round(llRes, 4));
 
         Double lyRes = lyRes(ppParamRes);
-        log.info("lyRes={}", FormulaService.round(lyRes, 0));
+//        log.info("lyRes={}", FormulaService.round(lyRes, 0));
 
         Double pprdRes = pprdRes(fbeRes, llRes, lyRes);
-        log.info("pprdRes={}", FormulaService.round(pprdRes, 2));
+//        log.info("pprdRes={}", FormulaService.round(pprdRes, 2));
 
-        Double piRes = piRes(pi, riRes, teiRes, length);
-        log.info("piRes={}", FormulaService.round(piRes, 2));
+        Double piRes = piRes(pi, plRes, teiRes, length); // riRes => plRes
+//        log.info("piRes={}", FormulaService.round(piRes, 2));
 
         Double bepRes = bepRes(ieikRes, boRes, bpRes, bttRes, betRes, bosRes, plRes, bep);
-        log.info("bepRes={}", FormulaService.round(bepRes, 2));
+//        log.info("bepRes={}", FormulaService.round(bepRes, 2));
 
         ResponseCalculate rc = new ResponseCalculate();
         rc.setYear(yearRes.stream().map(e -> String.format("%.0f", round(e, 2))).collect(Collectors.toList()));
@@ -509,10 +507,10 @@ public class FormulaService {
     }
 
     // Profitability Index
-    public Double piRes(Double pi, List<Double> riRes, List<Double> teiRes, int length) {
-        double[] riResD = new double[riRes.size()];
-        for (int i = 0; i < riRes.size(); i++) {
-            riResD[i] = riRes.get(i);
+    public Double piRes(Double pi, List<Double> plRes, List<Double> teiRes, int length) { // riRes => plRes
+        double[] riResD = new double[plRes.size()];
+        for (int i = 0; i < plRes.size(); i++) {
+            riResD[i] = plRes.get(i);
         }
         double[] teiResD = new double[teiRes.size()];
         for (int i = 0; i < teiRes.size(); i++) {

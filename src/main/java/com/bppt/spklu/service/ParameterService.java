@@ -1,7 +1,7 @@
 package com.bppt.spklu.service;
 
 import com.bppt.spklu.constant.FormulaEnum;
-import com.bppt.spklu.model.MainParameter;
+import com.bppt.spklu.entity.MainParameter;
 import com.bppt.spklu.repo.MainParameterRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,6 +57,8 @@ public class ParameterService {
             key = "pi";
         if (fe == FormulaEnum.bep)
             key = "bep";
+        if (fe == FormulaEnum.dirTemp)
+            key = "dirTemp";
 
         String finalKey = key + "";
         String mp = list.stream().filter(e -> finalKey.equalsIgnoreCase(e.getKey())).findFirst().map(MainParameter::getValue).orElse("0.0");

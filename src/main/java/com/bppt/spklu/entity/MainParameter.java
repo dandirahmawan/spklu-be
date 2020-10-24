@@ -1,4 +1,4 @@
-package com.bppt.spklu.model;
+package com.bppt.spklu.entity;
 
 import lombok.Data;
 
@@ -8,7 +8,7 @@ import javax.persistence.Table;
 @Data
 @Entity
 @Table(name = "main_parameter")
-public class MainParameter extends BaseModel {
+public class MainParameter extends BaseEntity {
 
     private String key;
     private String value;

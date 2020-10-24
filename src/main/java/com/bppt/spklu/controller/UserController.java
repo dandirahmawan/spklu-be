@@ -1,6 +1,6 @@
 package com.bppt.spklu.controller;
 
-import com.bppt.spklu.model.MainUser;
+import com.bppt.spklu.entity.MainUser;
 import com.bppt.spklu.model.ResponseRest;
 import com.bppt.spklu.service.UserService;
 import lombok.extern.slf4j.Slf4j;
