@@ -29,7 +29,7 @@ public class AdminController extends CommonController {
 
     @GetMapping("/form-value/{name}")
     public ResponseEntity getOneByNameFormValue(HttpServletRequest req, HttpServletResponse res, @PathVariable String name) {
-//        req.setAttribute("isSecure", false);
+        req.setAttribute("isSecure", false);
         return res(req, res, null, () -> mainFormValueService.getOneByName(name));
     }
 
