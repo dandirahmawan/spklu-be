@@ -50,6 +50,9 @@ INSERT INTO `main_form_value` VALUES (13, NULL, NULL, 'jumlah_konektor', NULL, N
 INSERT INTO `main_form_value` VALUES (14, NULL, NULL, 'daya_maksimum_konektor', NULL, NULL);
 INSERT INTO `main_form_value` VALUES (15, NULL, NULL, 'kapasitas_kbl', '25', NULL);
 INSERT INTO `main_form_value` VALUES (16, NULL, NULL, 'rugi_dan_daya_pendukung', '10', NULL);
+INSERT INTO `main_form_value` VALUES (17, NULL, NULL, 'rasio_spklu', '38', NULL);
+INSERT INTO `main_form_value` VALUES (18, NULL, NULL, 'durasi_penggunaan_evse', '20', NULL);
+INSERT INTO `main_form_value` VALUES (19, NULL, NULL, 'biaya_sewa_lahan', '0', NULL);
 
 -- ----------------------------
 -- Table structure for main_parameter
