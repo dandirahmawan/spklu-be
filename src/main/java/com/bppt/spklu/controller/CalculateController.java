@@ -3,15 +3,12 @@ package com.bppt.spklu.controller;
 import com.bppt.spklu.constant.FormulaEnum;
 import com.bppt.spklu.entity.MainParameter;
 import com.bppt.spklu.model.CalculateParameter;
-import com.bppt.spklu.model.ResponseCalculate;
-import com.bppt.spklu.model.ResponseRest;
 import com.bppt.spklu.service.ExcelService;
 import com.bppt.spklu.service.FormulaService;
 import com.bppt.spklu.service.ParameterService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,28 +39,28 @@ public class CalculateController extends CommonController {
     private FormulaService fs;
 
     @PostMapping
-    public ResponseRest<ResponseCalculate> calculate(HttpServletRequest req, HttpServletResponse res, @RequestBody CalculateParameter cp) {
+    public ResponseEntity calculate(HttpServletRequest req, HttpServletResponse res, @RequestBody CalculateParameter cp) {
         return res(req, res, cp, () -> fs.genFormula(cp));
-//        ResponseCalculate res = fs.genFormula(cp);
-//        return new ResponseRest<>("success", true, res);
     }
 
     @Autowired
     private ExcelService excelService;
 
     @PostMapping("/excel")
-    public ResponseRest<String> generateExcel(@RequestBody CalculateParameter cp) {
-        String res = "";
-        try {
-            String n = excelService.generate(cp);
-            res = ServletUriComponentsBuilder.fromCurrentContextPath()
-                    .path("/api/download/")
-                    .path(n)
-                    .toUriString();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return new ResponseRest<>("success", true, res);
+    public ResponseEntity generateExcel(HttpServletRequest req, HttpServletResponse res, @RequestBody CalculateParameter cp) {
+        return res(req, res, cp, () -> {
+            String r = "";
+            try {
+                String n = excelService.generate(cp);
+                r = ServletUriComponentsBuilder.fromCurrentContextPath()
+                        .path("/api/download/")
+                        .path(n)
+                        .toUriString();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return r;
+        });
     }
 
     @Autowired
