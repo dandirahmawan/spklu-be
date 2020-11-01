@@ -4,4 +4,7 @@ import com.bppt.spklu.entity.MainParameter;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MainParameterRepo extends JpaRepository<MainParameter, Integer> {
+
+    MainParameter findFirstByKey(String key);
+
 }
