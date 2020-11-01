@@ -3,6 +3,7 @@ package com.bppt.spklu.service;
 import com.bppt.spklu.constant.FormulaEnum;
 import com.bppt.spklu.model.CalculateParameter;
 import com.bppt.spklu.entity.MainParameter;
+import com.bppt.spklu.model.CalcOptmz;
 import com.bppt.spklu.model.ResponseCalculate;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.util.NumberToTextConverter;
@@ -23,7 +24,7 @@ public class FormulaService {
     @Autowired
     private ParameterService ps;
 
-    public ResponseCalculate genFormula(CalculateParameter cp) {
+    public CalcOptmz genFormula(CalculateParameter cp) {
         List<MainParameter> l = ps.getParameters();
 
         Double jkfev = Double.parseDouble(cp.getKondisiEkonomi().getJumlahKendaraanInisial()); //600.0; // Jumlah Kendaraan Full EV pada tahun baseline
@@ -200,7 +201,14 @@ public class FormulaService {
         rc.setPi(String.format("%.2f", round(piRes, 2)));
         rc.setBep(String.format("%.2f", round(bepRes, 2)));
 
-        return rc;
+        CalcOptmz ro = new CalcOptmz();
+        ro.setResponseCalculate(rc);
+
+        String len = String.format( "%.0f", Double.parseDouble(cp.getKondisiEkonomi().getBiayaSpklu()) );
+        int nol = len.length() - 2;
+        ro.setPaybackPeriod(String.format("%."+nol+"f", round(pprdRes, nol)));
+
+        return ro;
     }
 
     // Infrastructure Expense (in kIDR)
