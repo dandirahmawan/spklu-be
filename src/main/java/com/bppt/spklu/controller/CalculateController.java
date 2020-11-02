@@ -47,73 +47,13 @@ public class CalculateController extends CommonController {
         return res(req, res, cp, () -> fs.genFormula(cp).getResponseCalculate());
     }
 
-    @Autowired
-    private MainParameterRepo mpr;
-
     @PostMapping
     public ResponseEntity calculateE(HttpServletRequest req, HttpServletResponse res, @RequestBody CalculateParameter cp,
-                                     @Param("optimize") Boolean optimize) {
-        if (optimize != null && optimize)
+                                     @Param("optimize") Boolean optimize, @Param("typeOptimize") Boolean typeOptimize) {
+        if (optimize != null && optimize && typeOptimize != null)
             return res(req, res, cp, () -> {
-                long stTime = System.currentTimeMillis();
-
-                double cost = 9E9; //Double.parseDouble(cp.getKondisiEkonomi().getBiayaSpklu());
-                CalcOptmz ro = fs.genFormula(cp);
-                double ppStart = Double.parseDouble(ro.getResponseCalculate().getPprd());
-
-                MainParameter mp = mpr.findFirstByKey("ppOptimize");
-                double ppOptz = Double.parseDouble(mp.getValue());
-
-                if (ppOptz != ppStart) {
-                    String len = String.format("%.0f", cost);
-                    int zero = len.length() - 1;
-
-                    double pp = 0;
-                    double result = 0;
-                    int loop = 0;
-
-                    while (true) {
-                        if (result == 0)
-                            result = cost - Math.pow(10, zero);
-                        else {
-                            if (result == Math.pow(10, zero)) {
-                                zero -= 1;
-                                result = result - Math.pow(10, zero);
-                            } else {
-                                result = result - Math.pow(10, zero);
-                            }
-                        }
-
-                        cp.getKondisiEkonomi().setBiayaSpklu(String.format("%.0f", result));
-                        pp = Double.parseDouble(fs.genFormula(cp).getPaybackPeriod());
-
-                        log.info("pp={} hasilKurang={}", pp, String.format("%.0f", result));
-
-                        if (pp < ppOptz) {
-                            if (result == 0)
-                                result = cost + Math.pow(10, zero);
-                            else
-                                result = result + Math.pow(10, zero);
-                            zero -= 1;
-                        }
-
-                        if (pp == ppOptz) {
-                            log.info("akhir pp={} hasilKurang={}", pp, String.format("%.0f", result));
-                            break;
-                        }
-
-                        loop += 1;
-                        if (loop == 90) {
-                            break;
-                        }
-                    }
-                    long edTime = (System.currentTimeMillis() - stTime);
-                    log.info("hasil waktu={} hasil loop={}", String.format("%.3f", Double.parseDouble(String.valueOf(edTime)) / 1000), loop);
-                }
-                ResultOptimize opt = new ResultOptimize();
-                opt.setRequestCalculate(cp);
-                opt.setResponseCalculate(fs.genFormula(cp).getResponseCalculate());
-                return opt;
+                if (typeOptimize.equals("harga-evse")) return fs.optHargaEvse(cp);
+                return null;
             });
         else return res(req, res, cp, () -> {
             ResultOptimize opt = new ResultOptimize();
