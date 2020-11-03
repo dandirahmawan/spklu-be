@@ -9,9 +9,11 @@ import com.bppt.spklu.model.ResultOptimize;
 import com.bppt.spklu.repo.MainParameterRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.util.NumberToTextConverter;
+import org.omg.Messaging.SYNC_WITH_TRANSPORT;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -85,6 +87,175 @@ public class FormulaService {
             long edTime = (System.currentTimeMillis() - stTime);
             log.info("hasil waktu={} hasil loop={}", String.format("%.3f", Double.parseDouble(String.valueOf(edTime)) / 1000), loop);
         }
+        ResultOptimize opt = new ResultOptimize();
+        opt.setRequestCalculate(cp);
+        opt.setResponseCalculate(fs.genFormula(cp).getResponseCalculate());
+        return opt;
+    }
+
+
+    public ResultOptimize optRasioSpklu(CalculateParameter cp) {
+        CalcOptmz ro = fs.genFormula(cp);
+        double ppStart = Double.parseDouble(ro.getResponseCalculate().getPprd());
+
+        Double startData = new Double(0);
+        Double param = new Double(cp.getParameterBisnis().getRasioSpklu());
+        if(ppStart > new Double(3.5)){
+            while (true) {
+                startData = param * 2;
+                System.out.println("start data : " + startData);
+                cp.getParameterBisnis().setRasioSpklu(String.format("%.0f", startData));
+                Double pp = Double.parseDouble(fs.genFormula(cp).getPaybackPeriod());
+                if (pp < 3.5) break;
+            }
+        }else{
+            startData = param;
+        }
+
+        int lengthNumb = String.format("%.0f", startData).length();
+        if(lengthNumb > 2){
+            int pw = lengthNumb - 1;
+            int initStart = 9;
+            int setPar = 0;
+            int lastPar = 0;
+            while(true){
+                int par = (pw > 0) ? (int) Math.pow(10, pw) * initStart : initStart;
+                par += setPar;
+
+                System.out.println("par : "+par);
+                initStart -= 1;
+
+                cp.getParameterBisnis().setRasioSpklu(String.valueOf(par));
+                Double pp = Double.parseDouble(fs.genFormula(cp).getPaybackPeriod());
+
+                if(pp > 3.5) {
+                    setPar = par;
+                    lastPar = (lastPar < par && par < 3.5) ? par : lastPar;
+                    cp.getParameterBisnis().setRasioSpklu(String.valueOf(lastPar));
+                    pw -= 1;
+                    initStart = 9;
+                }
+
+                if(initStart == 0){
+                    pw -= 1;
+                    initStart = 9;
+                    System.out.println("pw : "+pw);
+                }
+
+                System.out.println("pp : "+pp);
+                System.out.println("----------");
+                lastPar = par;
+                if(pw < 0) break;
+            }
+        }
+
+        if(lengthNumb == 2){
+            /*set max value*/
+            int lp = (Integer.parseInt(String.format("%.0f", startData)) + 10) / 10;
+            lp = lp * 10;
+
+            while (true){
+                System.out.println("lp : "+lp);
+                cp.getParameterBisnis().setRasioSpklu(String.valueOf(lp));
+                Double pp = Double.parseDouble(fs.genFormula(cp).getPaybackPeriod());
+
+                if(pp > 3.5) break;
+                lp -= 10;
+            }
+
+            int x = 9;
+            lp = lp + 9;
+            while (true){
+                cp.getParameterBisnis().setRasioSpklu(String.valueOf(lp));
+                Double pp = Double.parseDouble(fs.genFormula(cp).getPaybackPeriod());
+
+                if(x == 0 || pp > 3.5){
+                    lp += 1;
+                    /*set new parameter optimize rasio spklu*/
+                    cp.getParameterBisnis().setRasioSpklu(String.valueOf(lp));
+                    break;
+                }
+
+                lp -= 1;
+                x -= 1;
+            }
+        }
+
+        ResultOptimize opt = new ResultOptimize();
+        opt.setRequestCalculate(cp);
+        opt.setResponseCalculate(fs.genFormula(cp).getResponseCalculate());
+        return opt;
+    }
+
+    public ResultOptimize optRasioHargaListrikPln(CalculateParameter cp) {
+        Double max = new Double(2);
+        Double min = new Double(0.8);
+        Double lastMax = new Double(0);
+        while (true){
+            cp.getParameterBisnis().setHargaJualPln(min.toString());
+            Double pp = Double.parseDouble(fs.genFormula(cp).getPaybackPeriod());
+            if(pp > 3.5 || min > max) {
+                if(min > max){
+                    lastMax = new Double(2);
+                }else{
+                    lastMax = (min > 0.8) ? min - 0.1 : 0.8;
+                }
+                break;
+            }
+            min += 0.1;
+        }
+
+        if(lastMax < max && lastMax > 0.8){
+            lastMax += 0.09;
+            while (true){
+                cp.getParameterBisnis().setHargaJualPln(lastMax.toString());
+                Double pp = Double.parseDouble(fs.genFormula(cp).getPaybackPeriod());
+                System.out.println("strt : "+lastMax);
+                if(pp <= 3.5) break;
+                lastMax -= 0.01;
+            }
+        }
+
+        cp.getParameterBisnis().setHargaJualPln(String.valueOf(round(lastMax, 2)));
+        ResultOptimize opt = new ResultOptimize();
+        opt.setRequestCalculate(cp);
+        opt.setResponseCalculate(fs.genFormula(cp).getResponseCalculate());
+        return opt;
+    }
+
+    public ResultOptimize optRasioHargaJualKonsumen(CalculateParameter cp) {
+        Double max = new Double(1.5);
+        Double min = new Double(0);
+        Double lastMax = new Double(0);
+        while (true){
+            cp.getParameterBisnis().setHargaJualKonsumen(min.toString());
+            Double pp = Double.parseDouble(fs.genFormula(cp).getPaybackPeriod());
+//            System.out.println("pp : "+pp);
+//            System.out.println("pr : "+min);
+            if(pp < 3.5 || min > max) {
+                if(min > max){
+                    lastMax = new Double(1.5);
+                }else{
+                    lastMax = (min > 0) ? min : 0;
+                }
+                break;
+            }
+            min += 0.1;
+        }
+
+        lastMax -= 0.1;
+        if(lastMax < max){
+            lastMax += 0.09;
+            while (true){
+                cp.getParameterBisnis().setHargaJualKonsumen(lastMax.toString());
+                Double pp = Double.parseDouble(fs.genFormula(cp).getPaybackPeriod());
+//                System.out.println("strt : "+lastMax);
+                if(pp >= 3.5) break;
+                lastMax -= 0.01;
+            }
+        }
+
+        cp.getParameterBisnis().setHargaJualKonsumen(String.valueOf(round(lastMax, 2)));
         ResultOptimize opt = new ResultOptimize();
         opt.setRequestCalculate(cp);
         opt.setResponseCalculate(fs.genFormula(cp).getResponseCalculate());

@@ -49,10 +49,13 @@ public class CalculateController extends CommonController {
 
     @PostMapping
     public ResponseEntity calculateE(HttpServletRequest req, HttpServletResponse res, @RequestBody CalculateParameter cp,
-                                     @Param("optimize") Boolean optimize, @Param("typeOptimize") Boolean typeOptimize) {
+                                     @Param("optimize") Boolean optimize, @Param("typeOptimize") String typeOptimize) {
         if (optimize != null && optimize && typeOptimize != null)
             return res(req, res, cp, () -> {
                 if (typeOptimize.equals("harga-evse")) return fs.optHargaEvse(cp);
+                if (typeOptimize.equals("rasio-spklu")) return fs.optRasioSpklu(cp);
+                if (typeOptimize.equals("rasio-harga-listrik-pln")) return fs.optRasioHargaListrikPln(cp);
+                if (typeOptimize.equals("rasio-tarif-jual-spklu")) return fs.optRasioHargaJualKonsumen(cp);
                 return null;
             });
         else return res(req, res, cp, () -> {
