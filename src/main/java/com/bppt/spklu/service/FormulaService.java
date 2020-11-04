@@ -466,7 +466,7 @@ public class FormulaService {
     public List<Double> boRes(Double bo, List<Double> ieikRes, Double bsl, List<Double> jsRes) {
         List<Double> result = new ArrayList<>();
         for (int i = 0; i <= (ieikRes.size() - 1); i++) {
-            Double d = (bo * ieikRes.get(i)) + (bsl * jsRes.get(i));
+            Double d = (bo * ieikRes.get(i)) - (bsl * jsRes.get(i)); // + => -
             result.add(d);
         }
         return result;

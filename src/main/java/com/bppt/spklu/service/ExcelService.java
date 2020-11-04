@@ -474,7 +474,7 @@ public class ExcelService {
         for (int i = 0; i < LEN_COL_CALC; i += 1) {
             Cell cell = efs.createCell(sheet, boRow, ST_COL_CALC, null, accountingStyle, null);
             cell.setCellType(CellType.FORMULA);
-            cell.setCellFormula("(" + bo + "*" + efs.getIndexCol(ST_COL_CALC) + ieikRow +")+($G$11*" + efs.getIndexCol(ST_COL_CALC)+ jsRow + ")"); // =(0.02*C40)+($G$11*C24)
+            cell.setCellFormula("(" + bo + "*" + efs.getIndexCol(ST_COL_CALC) + ieikRow +")-($G$11*" + efs.getIndexCol(ST_COL_CALC)+ jsRow + ")"); // =(0.02*C40)+($G$11*C24) // + => -
             ST_COL_CALC += 1;
         }
 
@@ -812,8 +812,8 @@ public class ExcelService {
 //        }
 
 
-        Integer stYear = Integer.parseInt(cp.getYears().getStartYear()); //2020;
-        Integer edYear = Integer.parseInt(cp.getYears().getFinishYear()); //2030;
+//        Integer stYear = Integer.parseInt(cp.getYears().getStartYear()); //2020;
+//        Integer edYear = Integer.parseInt(cp.getYears().getFinishYear()); //2030;
 
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Kalkulasi");
@@ -934,8 +934,7 @@ public class ExcelService {
 
         for (String r : ro.getResponseCalculate().getYearTo()) {
             Cell cell = efs.createCell(sheet, ST_ROW_CALC, ST_COL_CALC, null, null, 4000);
-            cell.setCellType(CellType.FORMULA);
-            cell.setCellFormula(r);
+            cell.setCellValue(Double.parseDouble(r));
             ST_COL_CALC += 1;
         }
 
@@ -947,8 +946,7 @@ public class ExcelService {
         ST_COL_CALC = 3;
         for (String r : ro.getResponseCalculate().getYear()) {
             Cell cell = efs.createCell(sheet, tkRow, ST_COL_CALC, null, null, null);
-            cell.setCellType(CellType.FORMULA);
-            cell.setCellFormula(r);
+            cell.setCellValue(Double.parseDouble(r));
             ST_COL_CALC += 1;
         }
 
@@ -960,8 +958,7 @@ public class ExcelService {
         ST_COL_CALC = 3;
         for (String r : ro.getResponseCalculate().getPkl()) {
             Cell cell = efs.createCell(sheet, pklRow, ST_COL_CALC, null, accountingStyle, null);
-            cell.setCellType(CellType.FORMULA);
-            cell.setCellFormula(r);
+            cell.setCellValue(Double.parseDouble(r));
             ST_COL_CALC += 1;
         }
 
@@ -973,8 +970,7 @@ public class ExcelService {
         ST_COL_CALC = 3;
         for (String r : ro.getResponseCalculate().getJs()) {
             Cell cell = efs.createCell(sheet, jsRow, ST_COL_CALC, null, accountingStyle, null);
-            cell.setCellType(CellType.FORMULA);
-            cell.setCellFormula(r);
+            cell.setCellValue(Double.parseDouble(r));
             ST_COL_CALC += 1;
         }
 
@@ -986,8 +982,7 @@ public class ExcelService {
         ST_COL_CALC = 3;
         for (String r : ro.getResponseCalculate().getKeh()) {
             Cell cell = efs.createCell(sheet, kehRow, ST_COL_CALC, null, accountingStyle, null);
-            cell.setCellType(CellType.FORMULA);
-            cell.setCellFormula(r);
+            cell.setCellValue(Double.parseDouble(r));
             ST_COL_CALC += 1;
         }
 
@@ -999,8 +994,7 @@ public class ExcelService {
         ST_COL_CALC = 3;
         for (String r : ro.getResponseCalculate().getHe()) {
             Cell cell = efs.createCell(sheet, heRow, ST_COL_CALC, null, accountingStyle, null);
-            cell.setCellType(CellType.FORMULA);
-            cell.setCellFormula(r);
+            cell.setCellValue(Double.parseDouble(r));
             ST_COL_CALC += 1;
         }
 
@@ -1012,8 +1006,7 @@ public class ExcelService {
         ST_COL_CALC = 3;
         for (String r : ro.getResponseCalculate().getSb()) {
             Cell cell = efs.createCell(sheet, sbRow, ST_COL_CALC, null, accountingStyle, null);
-            cell.setCellType(CellType.FORMULA);
-            cell.setCellFormula(r);
+            cell.setCellValue(Double.parseDouble(r));
             ST_COL_CALC += 1;
         }
 
@@ -1025,8 +1018,7 @@ public class ExcelService {
         ST_COL_CALC = 3;
         for (String r : ro.getResponseCalculate().getPkhg()) {
             Cell cell = efs.createCell(sheet, pkhgRow, ST_COL_CALC, null, accountingStyle, null);
-            cell.setCellType(CellType.FORMULA);
-            cell.setCellFormula(r);
+            cell.setCellValue(Double.parseDouble(r));
             ST_COL_CALC += 1;
         }
 
@@ -1038,8 +1030,7 @@ public class ExcelService {
         ST_COL_CALC = 3;
         for (String r : ro.getResponseCalculate().getBc()) {
             Cell cell = efs.createCell(sheet, bcRow, ST_COL_CALC, null, accountingStyle, null);
-            cell.setCellType(CellType.FORMULA);
-            cell.setCellFormula(r);
+            cell.setCellValue(Double.parseDouble(r));
             ST_COL_CALC += 1;
         }
 
@@ -1051,8 +1042,7 @@ public class ExcelService {
         ST_COL_CALC = 3;
         for (String r : ro.getResponseCalculate().getFcfeh()) {
             Cell cell = efs.createCell(sheet, fcfehRow, ST_COL_CALC, null, accountingStyle, null);
-            cell.setCellType(CellType.FORMULA);
-            cell.setCellFormula(r);
+            cell.setCellValue(Double.parseDouble(r));
             ST_COL_CALC += 1;
         }
 
@@ -1064,8 +1054,7 @@ public class ExcelService {
         ST_COL_CALC = 3;
         for (String r : ro.getResponseCalculate().getFchh()) {
             Cell cell = efs.createCell(sheet, fchhRow, ST_COL_CALC, null, accountingStyle, null);
-            cell.setCellType(CellType.FORMULA);
-            cell.setCellFormula(r);
+            cell.setCellValue(Double.parseDouble(r));
             ST_COL_CALC += 1;
         }
 
@@ -1085,8 +1074,7 @@ public class ExcelService {
         ST_COL_CALC = 3;
         for (String r : ro.getResponseCalculate().getPk()) {
             Cell cell = efs.createCell(sheet, pkRow, ST_COL_CALC, null, accountingStyle, null);
-            cell.setCellType(CellType.FORMULA);
-            cell.setCellFormula(r);
+            cell.setCellValue(Double.parseDouble(r));
             ST_COL_CALC += 1;
         }
 
@@ -1098,8 +1086,7 @@ public class ExcelService {
         ST_COL_CALC = 3;
         for (String r : ro.getResponseCalculate().getPl()) {
             Cell cell = efs.createCell(sheet, plRow, ST_COL_CALC, null, accountingStyle, null);
-            cell.setCellType(CellType.FORMULA);
-            cell.setCellFormula(r);
+            cell.setCellValue(Double.parseDouble(r));
             ST_COL_CALC += 1;
         }
 
@@ -1121,8 +1108,7 @@ public class ExcelService {
         ST_COL_CALC = 3;
         for (String r : ro.getResponseCalculate().getBet()) {
             Cell cell = efs.createCell(sheet, betRow, ST_COL_CALC, null, accountingStyle, null);
-            cell.setCellType(CellType.FORMULA);
-            cell.setCellFormula(r);
+            cell.setCellValue(Double.parseDouble(r));
             ST_COL_CALC += 1;
         }
 
@@ -1134,8 +1120,7 @@ public class ExcelService {
         ST_COL_CALC = 3;
         for (String r : ro.getResponseCalculate().getBos()) {
             Cell cell = efs.createCell(sheet, bosRow, ST_COL_CALC, null, accountingStyle, null);
-            cell.setCellType(CellType.FORMULA);
-            cell.setCellFormula(r);
+            cell.setCellValue(Double.parseDouble(r));
             ST_COL_CALC += 1;
         }
 
@@ -1147,8 +1132,7 @@ public class ExcelService {
         ST_COL_CALC = 3;
         for (String r : ro.getResponseCalculate().getIeik()) {
             Cell cell = efs.createCell(sheet, ieikRow, ST_COL_CALC, null, accountingStyle, null);
-            cell.setCellType(CellType.FORMULA);
-            cell.setCellFormula(r);
+            cell.setCellValue(Double.parseDouble(r));
             ST_COL_CALC += 1;
         }
 
@@ -1160,8 +1144,7 @@ public class ExcelService {
         ST_COL_CALC = 3;
         for (String r : ro.getResponseCalculate().getBo()) {
             Cell cell = efs.createCell(sheet, boRow, ST_COL_CALC, null, accountingStyle, null);
-            cell.setCellType(CellType.FORMULA);
-            cell.setCellFormula(r);
+            cell.setCellValue(Double.parseDouble(r));
             ST_COL_CALC += 1;
         }
 
@@ -1173,8 +1156,7 @@ public class ExcelService {
         ST_COL_CALC = 3;
         for (String r : ro.getResponseCalculate().getBp()) {
             Cell cell = efs.createCell(sheet, bpRow, ST_COL_CALC, null, accountingStyle, null);
-            cell.setCellType(CellType.FORMULA);
-            cell.setCellFormula(r);
+            cell.setCellValue(Double.parseDouble(r));
             ST_COL_CALC += 1;
         }
 
@@ -1186,8 +1168,7 @@ public class ExcelService {
         ST_COL_CALC = 3;
         for (String r : ro.getResponseCalculate().getBtt()) {
             Cell cell = efs.createCell(sheet, bttRow, ST_COL_CALC, null, accountingStyle, null);
-            cell.setCellType(CellType.FORMULA);
-            cell.setCellFormula(r);
+            cell.setCellValue(Double.parseDouble(r));
             ST_COL_CALC += 1;
         }
 
@@ -1199,8 +1180,7 @@ public class ExcelService {
         ST_COL_CALC = 3;
         for (String r : ro.getResponseCalculate().getTei()) {
             Cell cell = efs.createCell(sheet, teiRow, ST_COL_CALC, null, accountingStyle, null);
-            cell.setCellType(CellType.FORMULA);
-            cell.setCellFormula(r);
+            cell.setCellValue(Double.parseDouble(r));
             ST_COL_CALC += 1;
         }
 
@@ -1212,8 +1192,7 @@ public class ExcelService {
         ST_COL_CALC = 3;
         for (String r : ro.getResponseCalculate().getGpik()) {
             Cell cell = efs.createCell(sheet, gpikRow, ST_COL_CALC, null, accountingStyle, null);
-            cell.setCellType(CellType.FORMULA);
-            cell.setCellFormula(r);
+            cell.setCellValue(Double.parseDouble(r));
             ST_COL_CALC += 1;
         }
 
@@ -1225,8 +1204,7 @@ public class ExcelService {
         ST_COL_CALC = 3;
         for (String r : ro.getResponseCalculate().getTax()) {
             Cell cell = efs.createCell(sheet, taxRow, ST_COL_CALC, null, accountingStyle, null);
-            cell.setCellType(CellType.FORMULA);
-            cell.setCellFormula(r);
+            cell.setCellValue(Double.parseDouble(r));
             ST_COL_CALC += 1;
         }
 
@@ -1238,8 +1216,7 @@ public class ExcelService {
         ST_COL_CALC = 3;
         for (String r : ro.getResponseCalculate().getCs()) {
             Cell cell = efs.createCell(sheet, csRow, ST_COL_CALC, null, accountingStyle, null);
-            cell.setCellType(CellType.FORMULA);
-            cell.setCellFormula(r);
+            cell.setCellValue(Double.parseDouble(r));
             ST_COL_CALC += 1;
         }
 
@@ -1251,8 +1228,7 @@ public class ExcelService {
         ST_COL_CALC = 3;
         for (String r : ro.getResponseCalculate().getDcs()) {
             Cell cell = efs.createCell(sheet, dcsRow, ST_COL_CALC, null, accountingStyle, null);
-            cell.setCellType(CellType.FORMULA);
-            cell.setCellFormula(r);
+            cell.setCellValue(Double.parseDouble(r));
             ST_COL_CALC += 1;
         }
 
@@ -1264,8 +1240,7 @@ public class ExcelService {
         ST_COL_CALC = 3;
         for (String r : ro.getResponseCalculate().getCf()) {
             Cell cell = efs.createCell(sheet, cfRow, ST_COL_CALC, null, accountingStyle, null);
-            cell.setCellType(CellType.FORMULA);
-            cell.setCellFormula(r);
+            cell.setCellValue(Double.parseDouble(r));
             ST_COL_CALC += 1;
         }
 
@@ -1277,8 +1252,7 @@ public class ExcelService {
         ST_COL_CALC = 3;
         for (String r : ro.getResponseCalculate().getPpParam()) {
             Cell cell = efs.createCell(sheet, ppRow, ST_COL_CALC, null, null, null);
-            cell.setCellType(CellType.FORMULA);
-            cell.setCellFormula(r);
+            cell.setCellValue(Double.parseDouble(r));
             ST_COL_CALC += 1;
         }
 
@@ -1289,16 +1263,14 @@ public class ExcelService {
         Cell fbeCell = efs.createCell(sheet, fbeRow, 10, null, null, null);
         fbeCell.setCellValue("First Break Even");
         Cell fbeValCell = efs.createCell(sheet, fbeRow, 11, null, null, null);
-        fbeValCell.setCellType(CellType.FORMULA);
-        fbeValCell.setCellFormula(ro.getResponseCalculate().getFbe());
+        fbeValCell.setCellValue(Double.parseDouble(ro.getResponseCalculate().getFbe()));
 
         // Last loss ==> J-32
         int llRow = ST_ROW_CALC + 32;
         Cell llCell = efs.createCell(sheet, llRow, 10, null, null, null);
         llCell.setCellValue("Last loss");
         Cell llValCell = efs.createCell(sheet, llRow, 11, null, null, null);
-        llValCell.setCellType(CellType.FORMULA);
-        llValCell.setCellFormula(ro.getResponseCalculate().getLl());
+        llValCell.setCellValue(Double.parseDouble(ro.getResponseCalculate().getLl()));
 
         // Loss Years ==> J-33
         ST_COL_CALC = 3;
@@ -1306,8 +1278,7 @@ public class ExcelService {
         Cell lyCell = efs.createCell(sheet, lyRow, 10, null, null, null);
         lyCell.setCellValue("Loss Years");
         Cell lyValCell = efs.createCell(sheet, lyRow, 11, null, null, null);
-        lyValCell.setCellType(CellType.FORMULA);
-        lyValCell.setCellFormula(ro.getResponseCalculate().getLy());
+        lyValCell.setCellValue(Double.parseDouble(ro.getResponseCalculate().getLy()));
 
         // Net Present Value ==> B-31
         CellStyle npvStyle = efs.cellStyle(workbook, false, false, null, null);
@@ -1317,8 +1288,7 @@ public class ExcelService {
         Cell npvCell = efs.createCell(sheet, npvRow, 2, null, null, null);
         npvCell.setCellValue("Net Present Value");
         Cell npvValCell = efs.createCell(sheet, npvRow, 3, null, npvStyle, null);
-        npvValCell.setCellType(CellType.FORMULA);
-        npvValCell.setCellFormula(ro.getResponseCalculate().getNpv());
+        npvValCell.setCellValue(Double.parseDouble(ro.getResponseCalculate().getNpv()));
         Cell npvX1000Cell = efs.createCell(sheet, npvRow, 4, null, null, null);
         npvX1000Cell.setCellValue("xRp 1000");
 
@@ -1330,41 +1300,37 @@ public class ExcelService {
         Cell irrCell = efs.createCell(sheet, irrRow, 2, null, null, null);
         irrCell.setCellValue("IRR");
         Cell irrValCell = efs.createCell(sheet, irrRow, 3, null, percentRightStyle, null);
-        irrValCell.setCellType(CellType.FORMULA);
-        irrValCell.setCellFormula(ro.getResponseCalculate().getIrr());
+        int irrLen = ro.getResponseCalculate().getIrr().length();
+        irrValCell.setCellValue(Double.parseDouble(ro.getResponseCalculate().getIrr().substring(0, irrLen - 1)) / 100);
 
         // MIRR ==> B-33
         int mirrRow = ST_ROW_CALC + 33;
         Cell mirrCell = efs.createCell(sheet, mirrRow, 2, null, null, null);
         mirrCell.setCellValue("MIRR");
         Cell mirrValCell = efs.createCell(sheet, mirrRow, 3, null, percentRightStyle, null);
-        mirrValCell.setCellType(CellType.FORMULA);
-        mirrValCell.setCellFormula(ro.getResponseCalculate().getMirr());
+        int mirrLen = ro.getResponseCalculate().getMirr().length();
+        mirrValCell.setCellValue(Double.parseDouble(ro.getResponseCalculate().getMirr().substring(0, mirrLen - 1)) / 100);
 
         // Payback Periode ==> B-34
         int ppLastRow = ST_ROW_CALC + 34;
         Cell ppLastCell = efs.createCell(sheet, ppLastRow, 2, null, null, null);
         ppLastCell.setCellValue("Payback Periode");
         Cell ppLastValCell = efs.createCell(sheet, ppLastRow, 3, null, accountingStyle, null);
-        ppLastValCell.setCellType(CellType.FORMULA);
-        ppLastValCell.setCellFormula(ro.getResponseCalculate().getPprd());
+        ppLastValCell.setCellValue(Double.parseDouble(ro.getResponseCalculate().getPprd()));
 
         // Profitability Index ==> B-35
         int piRow = ST_ROW_CALC + 35;
         Cell piCell = efs.createCell(sheet, piRow, 2, null, null, null);
         piCell.setCellValue("Profitability Index");
         Cell piValCell = efs.createCell(sheet, piRow, 3, null, accountingStyle, null);
-        piValCell.setCellType(CellType.FORMULA);
-        piValCell.setCellFormula(ro.getResponseCalculate().getPi());
-
+        piValCell.setCellValue(Double.parseDouble(ro.getResponseCalculate().getPi()));
 
         // Break Event Point (BEP) ==> B-36
         int bepRow = ST_ROW_CALC + 36;
         Cell bepCell = efs.createCell(sheet, bepRow, 2, null, null, null);
         bepCell.setCellValue("Break Event Point (BEP)");
         Cell bepValCell = efs.createCell(sheet, bepRow, 3, null, accountingStyle, null);
-        bepValCell.setCellType(CellType.FORMULA);
-        bepValCell.setCellFormula(ro.getResponseCalculate().getBep());
+        bepValCell.setCellValue(Double.parseDouble(ro.getResponseCalculate().getBep()));
         Cell bepX1000Cell = efs.createCell(sheet, bepRow, 4, null, null, null);
         bepX1000Cell.setCellValue("xRp 1000 (Nilai Penjualan)");
 
