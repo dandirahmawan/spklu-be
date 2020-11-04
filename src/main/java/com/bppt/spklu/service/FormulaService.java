@@ -243,8 +243,8 @@ public class FormulaService {
             min += 0.1;
         }
 
-        lastMax -= 0.1;
         if(lastMax < max){
+            lastMax -= 0.1;
             lastMax += 0.09;
             while (true){
                 cp.getParameterBisnis().setHargaJualKonsumen(lastMax.toString());
