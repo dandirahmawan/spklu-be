@@ -122,7 +122,6 @@ public class FormulaService {
                 int par = (pw > 0) ? (int) Math.pow(10, pw) * initStart : initStart;
                 par += setPar;
 
-                System.out.println("par : "+par);
                 initStart -= 1;
 
                 cp.getParameterBisnis().setRasioSpklu(String.valueOf(par));
@@ -139,11 +138,8 @@ public class FormulaService {
                 if(initStart == 0){
                     pw -= 1;
                     initStart = 9;
-                    System.out.println("pw : "+pw);
                 }
 
-                System.out.println("pp : "+pp);
-                System.out.println("----------");
                 lastPar = par;
                 if(pw < 0) break;
             }
@@ -230,8 +226,8 @@ public class FormulaService {
         while (true){
             cp.getParameterBisnis().setHargaJualKonsumen(min.toString());
             Double pp = Double.parseDouble(fs.genFormula(cp).getPaybackPeriod());
-            System.out.println("pp : "+pp);
-            System.out.println("pr : "+min);
+//            System.out.println("pp : "+pp);
+//            System.out.println("pr : "+min);
             if(pp < 3.5 || min > max) {
                 if(min > max){
                     lastMax = new Double(1.5);
@@ -249,9 +245,9 @@ public class FormulaService {
             while (true) {
                 cp.getParameterBisnis().setHargaJualKonsumen(lastMax.toString());
                 Double pp = Double.parseDouble(fs.genFormula(cp).getPaybackPeriod());
-                System.out.println("-------------------");
-                System.out.println("strt    : " + lastMax);
-                System.out.println("pp      : " + pp);
+//                System.out.println("-------------------");
+//                System.out.println("strt    : " + lastMax);
+//                System.out.println("pp      : " + pp);
                 if (pp >= 3.5){
                     lastMax += 0.01;
                     break;
