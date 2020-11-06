@@ -230,8 +230,8 @@ public class FormulaService {
         while (true){
             cp.getParameterBisnis().setHargaJualKonsumen(min.toString());
             Double pp = Double.parseDouble(fs.genFormula(cp).getPaybackPeriod());
-//            System.out.println("pp : "+pp);
-//            System.out.println("pr : "+min);
+            System.out.println("pp : "+pp);
+            System.out.println("pr : "+min);
             if(pp < 3.5 || min > max) {
                 if(min > max){
                     lastMax = new Double(1.5);
@@ -246,16 +246,85 @@ public class FormulaService {
         if(lastMax < max){
             lastMax -= 0.1;
             lastMax += 0.09;
-            while (true){
+            while (true) {
                 cp.getParameterBisnis().setHargaJualKonsumen(lastMax.toString());
                 Double pp = Double.parseDouble(fs.genFormula(cp).getPaybackPeriod());
-//                System.out.println("strt : "+lastMax);
-                if(pp >= 3.5) break;
+                System.out.println("-------------------");
+                System.out.println("strt    : " + lastMax);
+                System.out.println("pp      : " + pp);
+                if (pp >= 3.5){
+                    lastMax += 0.01;
+                    break;
+                }
+
                 lastMax -= 0.01;
             }
         }
 
+        System.out.println("last maz : "+String.valueOf(round(lastMax, 2)));
         cp.getParameterBisnis().setHargaJualKonsumen(String.valueOf(round(lastMax, 2)));
+        ResultOptimize opt = new ResultOptimize();
+        opt.setRequestCalculate(cp);
+        opt.setResponseCalculate(fs.genFormula(cp).getResponseCalculate());
+        return opt;
+    }
+
+    public ResultOptimize optBiayaSewaLahan(CalculateParameter cp) {
+        long stTime = System.currentTimeMillis();
+
+        double cost = 9E9; //Double.parseDouble(cp.getKondisiEkonomi().getBiayaSpklu());
+        CalcOptmz ro = fs.genFormula(cp);
+        double ppStart = Double.parseDouble(ro.getResponseCalculate().getPprd());
+
+        MainParameter mp = mpr.findFirstByKey("ppOptimize");
+        double ppOptz = Double.parseDouble(mp.getValue());
+
+        if (ppOptz != ppStart) {
+            String len = String.format("%.0f", cost);
+            int zero = len.length() - 1;
+
+            double pp = 0;
+            double result = 0;
+            int loop = 0;
+
+            while (true) {
+                if (result == 0)
+                    result = cost - Math.pow(10, zero);
+                else {
+                    if (result == Math.pow(10, zero)) {
+                        zero -= 1;
+                        result = result - Math.pow(10, zero);
+                    } else {
+                        result = result - Math.pow(10, zero);
+                    }
+                }
+
+                cp.getParameterBisnis().setBiayaSewaLahan(String.format("%.0f", result));
+                pp = Double.parseDouble(fs.genFormula(cp).getPaybackPeriod());
+
+                log.info("pp={} hasilKurang={}", pp, String.format("%.0f", result));
+
+                if (pp < ppOptz) {
+                    if (result == 0)
+                        result = cost + Math.pow(10, zero);
+                    else
+                        result = result + Math.pow(10, zero);
+                    zero -= 1;
+                }
+
+                if (pp == ppOptz) {
+                    log.info("akhir pp={} hasilKurang={}", pp, String.format("%.0f", result));
+                    break;
+                }
+
+                loop += 1;
+                if (loop == 90) {
+                    break;
+                }
+            }
+            long edTime = (System.currentTimeMillis() - stTime);
+            log.info("hasil waktu={} hasil loop={}", String.format("%.3f", Double.parseDouble(String.valueOf(edTime)) / 1000), loop);
+        }
         ResultOptimize opt = new ResultOptimize();
         opt.setRequestCalculate(cp);
         opt.setResponseCalculate(fs.genFormula(cp).getResponseCalculate());
