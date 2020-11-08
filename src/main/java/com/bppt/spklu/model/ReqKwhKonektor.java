@@ -2,10 +2,12 @@ package com.bppt.spklu.model;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class ReqKwhKonektor {
 
-    private Double no;
-    private Double value;
+    private Integer evse;
+    private List<ReqKonektor> konektor;
 
 }

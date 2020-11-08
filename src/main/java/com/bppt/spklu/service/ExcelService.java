@@ -3,6 +3,7 @@ package com.bppt.spklu.service;
 import com.bppt.spklu.constant.FormulaEnum;
 import com.bppt.spklu.model.CalculateParameter;
 import com.bppt.spklu.entity.MainParameter;
+import com.bppt.spklu.model.ReqKonektor;
 import com.bppt.spklu.model.ReqKwhKonektor;
 import com.bppt.spklu.model.CalcOptmz;
 import lombok.AllArgsConstructor;
@@ -68,7 +69,7 @@ public class ExcelService {
                 (Double.parseDouble(cp.getParameterBisnis().getPertumbuhanKblPerTahun()) / 100),
                 0.0, // TODO
                 Double.parseDouble(cp.getKondisiEkonomi().getBiayaSpklu()),
-                0.0, // TODO
+                Double.parseDouble(cp.getKondisiEkonomi().getSubsidiEnergi()) / 100, //0.0,
                 Double.parseDouble(cp.getParameterBisnis().getHargaJualPln()),
                 Double.parseDouble(cp.getParameterBisnis().getHargaJualKonsumen()),
                 (Double.parseDouble(cp.getParameterTeknis().getRugiDayaPendukung()) / 100),
@@ -155,18 +156,24 @@ public class ExcelService {
         int startRowKonektor = 10;
         int idxKonektor = 1;
         List<ReqKwhKonektor> listKonektor = cp.getParameterTeknis().getKwhPerKonektor();
-        listKonektor.sort(Comparator.comparing(ReqKwhKonektor::getNo));
-        for (ReqKwhKonektor konektor : cp.getParameterTeknis().getKwhPerKonektor()) { //for (Integer konektor : jumlahKonektorList) {
-            Cell konektorParamCell = efs.createCell(sheet, startRowKonektor, 2, null, column1CellStyle, null);
-            konektorParamCell.setCellValue(">> Spesifikasi daya luaran konektor " + idxKonektor + " (kW)");
-            Cell konektorValueCell = efs.createCell(sheet, startRowKonektor, 3, null, centerStyle, null);
-            konektorValueCell.setCellValue(konektor.getValue());
-            startRowKonektor += 1;
-            idxKonektor += 1;
+        listKonektor.sort(Comparator.comparing(ReqKwhKonektor::getEvse));
+
+        for (ReqKwhKonektor kwhKonektor : cp.getParameterTeknis().getKwhPerKonektor()) { //for (Integer konektor : jumlahKonektorList) {
+            List<ReqKonektor> konektors = kwhKonektor.getKonektor();
+            konektors.sort(Comparator.comparing(ReqKonektor::getNo));
+
+            for (ReqKonektor konek : konektors) {
+                Cell konektorParamCell = efs.createCell(sheet, startRowKonektor, 2, null, column1CellStyle, null);
+                konektorParamCell.setCellValue(">> (EVSE " + kwhKonektor.getEvse() + ") Spesifikasi daya luaran konektor " + idxKonektor + " (kW)");
+                Cell konektorValueCell = efs.createCell(sheet, startRowKonektor, 3, null, centerStyle, null);
+                konektorValueCell.setCellValue(konek.getValue());
+                startRowKonektor += 1;
+                idxKonektor += 1;
+            }
         }
 
         // Discount Rate
-        int drRow = 10 + listKonektor.size() + 1; //jumlahKonektorList.size() + 1;
+        int drRow = 10 + idxKonektor + 1; //jumlahKonektorList.size() + 1;
         Double dr = Double.parseDouble(cp.getKondisiEkonomi().getDiscountRate()) / 100; //0.13; // Discount Rate
         CellStyle percentPlace1Style = efs.cellStyle(workbook, false, false, null, null);
         percentPlace1Style.setDataFormat(percentFmt.getFormat("0.0%"));
@@ -796,7 +803,7 @@ public class ExcelService {
                 (Double.parseDouble(cp.getParameterBisnis().getPertumbuhanKblPerTahun()) / 100),
                 0.0, // TODO
                 Double.parseDouble(cp.getKondisiEkonomi().getBiayaSpklu()),
-                0.0, // TODO
+                Double.parseDouble(cp.getKondisiEkonomi().getSubsidiEnergi()) / 100, //0.0,
                 Double.parseDouble(cp.getParameterBisnis().getHargaJualPln()),
                 Double.parseDouble(cp.getParameterBisnis().getHargaJualKonsumen()),
                 (Double.parseDouble(cp.getParameterTeknis().getRugiDayaPendukung()) / 100),
@@ -882,19 +889,35 @@ public class ExcelService {
         // konektor
         int startRowKonektor = 10;
         int idxKonektor = 1;
+//        List<ReqKwhKonektor> listKonektor = cp.getParameterTeknis().getKwhPerKonektor();
+//        listKonektor.sort(Comparator.comparing(ReqKwhKonektor::getNo));
+//        for (ReqKwhKonektor konektor : cp.getParameterTeknis().getKwhPerKonektor()) { //for (Integer konektor : jumlahKonektorList) {
+//            Cell konektorParamCell = efs.createCell(sheet, startRowKonektor, 2, null, column1CellStyle, null);
+//            konektorParamCell.setCellValue(">> Spesifikasi daya luaran konektor " + idxKonektor + " (kW)");
+//            Cell konektorValueCell = efs.createCell(sheet, startRowKonektor, 3, null, centerStyle, null);
+//            konektorValueCell.setCellValue(konektor.getValue());
+//            startRowKonektor += 1;
+//            idxKonektor += 1;
+//        }
         List<ReqKwhKonektor> listKonektor = cp.getParameterTeknis().getKwhPerKonektor();
-        listKonektor.sort(Comparator.comparing(ReqKwhKonektor::getNo));
-        for (ReqKwhKonektor konektor : cp.getParameterTeknis().getKwhPerKonektor()) { //for (Integer konektor : jumlahKonektorList) {
-            Cell konektorParamCell = efs.createCell(sheet, startRowKonektor, 2, null, column1CellStyle, null);
-            konektorParamCell.setCellValue(">> Spesifikasi daya luaran konektor " + idxKonektor + " (kW)");
-            Cell konektorValueCell = efs.createCell(sheet, startRowKonektor, 3, null, centerStyle, null);
-            konektorValueCell.setCellValue(konektor.getValue());
-            startRowKonektor += 1;
-            idxKonektor += 1;
+        listKonektor.sort(Comparator.comparing(ReqKwhKonektor::getEvse));
+
+        for (ReqKwhKonektor kwhKonektor : cp.getParameterTeknis().getKwhPerKonektor()) { //for (Integer konektor : jumlahKonektorList) {
+            List<ReqKonektor> konektors = kwhKonektor.getKonektor();
+            konektors.sort(Comparator.comparing(ReqKonektor::getNo));
+
+            for (ReqKonektor konek : konektors) {
+                Cell konektorParamCell = efs.createCell(sheet, startRowKonektor, 2, null, column1CellStyle, null);
+                konektorParamCell.setCellValue(">> (EVSE " + kwhKonektor.getEvse() + ") Spesifikasi daya luaran konektor " + idxKonektor + " (kW)");
+                Cell konektorValueCell = efs.createCell(sheet, startRowKonektor, 3, null, centerStyle, null);
+                konektorValueCell.setCellValue(konek.getValue());
+                startRowKonektor += 1;
+                idxKonektor += 1;
+            }
         }
 
         // Discount Rate
-        int drRow = 10 + listKonektor.size() + 1; //jumlahKonektorList.size() + 1;
+        int drRow = 10 + idxKonektor + 1; //jumlahKonektorList.size() + 1;
         Double dr = Double.parseDouble(cp.getKondisiEkonomi().getDiscountRate()) / 100; //0.13; // Discount Rate
         CellStyle percentPlace1Style = efs.cellStyle(workbook, false, false, null, null);
         percentPlace1Style.setDataFormat(percentFmt.getFormat("0.0%"));

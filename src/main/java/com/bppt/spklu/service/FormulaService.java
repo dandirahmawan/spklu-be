@@ -306,7 +306,7 @@ public class FormulaService {
         Double heMtp = Double.parseDouble(ps.getParam(l, FormulaEnum.heMtp)); //0.707; // param ? Harga Energi (Rp/KwH)
         Double rhblp = Double.parseDouble(cp.getParameterBisnis().getHargaJualPln()); //1.2; // Rasio harga beli listrik PLN (Q, Rp 707 x Q)
         Double heMin = Double.parseDouble(ps.getParam(l, FormulaEnum.heMin)); //1.0; // param ? Harga Energi (Rp/KwH)
-        Double sep = 0.0; // Subsidi energi Persen TODO
+        Double sep = Double.parseDouble(cp.getKondisiEkonomi().getSubsidiEnergi()) / 100; //0.0; // Subsidi energi Persen TODO
         Double heMtpN = Double.parseDouble(ps.getParam(l, FormulaEnum.heMtpN)); //0.035; // param ? Harga Energi (Rp/KwH)
 
         Double bet = Double.parseDouble(ps.getParam(l, FormulaEnum.bet)); //365.0; // param Biaya Energy Tahunan
