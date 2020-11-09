@@ -101,8 +101,11 @@ public class FormulaService {
         Double startData = new Double(0);
         Double param = new Double(cp.getParameterBisnis().getRasioSpklu());
         if(ppStart > new Double(3.5)){
+            int xopt = 2;
             while (true) {
-                startData = param * 2;
+                startData += param * xopt;
+                xopt++;
+
                 System.out.println("start data : " + startData);
                 cp.getParameterBisnis().setRasioSpklu(String.format("%.0f", startData));
                 Double pp = Double.parseDouble(fs.genFormula(cp).getPaybackPeriod());
