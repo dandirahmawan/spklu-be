@@ -330,6 +330,56 @@ public class FormulaService {
         return opt;
     }
 
+    public ResultOptimize optSubsidiEnergi(CalculateParameter cp) {
+        MainParameter mp = mpr.findFirstByKey("ppOptimize");
+        double ppOptz = Double.parseDouble(mp.getValue());
+
+        double pp = 0;
+        double result = 0;
+        int loop = 0;
+
+        cp.getKondisiEkonomi().setSubsidiEnergi(String.format("%.2f", result));
+        pp = Double.parseDouble(fs.genFormula(cp).getPaybackPeriod());
+
+        if (ppOptz != pp) {
+
+            i : while (true) {
+                cp.getKondisiEkonomi().setSubsidiEnergi(String.format("%.2f", result));
+                pp = Double.parseDouble(fs.genFormula(cp).getPaybackPeriod());
+
+                if (pp < ppOptz) {
+                    result -= 1;
+                    break i;
+                }
+                result += 1;
+                loop += 1;
+                if (loop == 100) {
+                    break i;
+                }
+            }
+
+            i : while (true) {
+                cp.getKondisiEkonomi().setSubsidiEnergi(String.format("%.2f", result));
+                pp = Double.parseDouble(fs.genFormula(cp).getPaybackPeriod());
+                if (pp == ppOptz || pp < ppOptz) {
+                    break i;
+                }
+                result += .01;
+                loop += 1;
+                if (loop == 1000) {
+                    break i;
+                }
+            }
+        }
+
+
+
+        ResultOptimize opt = new ResultOptimize();
+        opt.setRequestCalculate(cp);
+        opt.setResponseCalculate(fs.genFormula(cp).getResponseCalculate());
+        return opt;
+    }
+
     @Autowired
     private ParameterService ps;
 

@@ -150,6 +150,7 @@ public class ExcelService {
                 null, null);
         accountingStyle.setDataFormat(accountingFmt.getFormat("_(* #,##0.00_);_(* (#,##0.00);_(* \"-\"??_);_(@_)"));
         efs.createCell(sheet, 5, 7, null, accountingStyle, 3000);
+        efs.createCell(sheet, 11, 7, null, accountingStyle, 3000);
         efs.createCell(sheet, 12, 7, null, accountingStyle, 3000);
 
         // konektor
@@ -162,13 +163,16 @@ public class ExcelService {
             List<ReqKonektor> konektors = kwhKonektor.getKonektor();
             konektors.sort(Comparator.comparing(ReqKonektor::getNo));
 
+            int noKonek = 1;
+
             for (ReqKonektor konek : konektors) {
                 Cell konektorParamCell = efs.createCell(sheet, startRowKonektor, 2, null, column1CellStyle, null);
-                konektorParamCell.setCellValue(">> (EVSE " + kwhKonektor.getEvse() + ") Spesifikasi daya luaran konektor " + idxKonektor + " (kW)");
+                konektorParamCell.setCellValue(">> (EVSE " + kwhKonektor.getEvse() + ") Spesifikasi daya luaran konektor " + noKonek + " (kW)");
                 Cell konektorValueCell = efs.createCell(sheet, startRowKonektor, 3, null, centerStyle, null);
                 konektorValueCell.setCellValue(konek.getValue());
                 startRowKonektor += 1;
                 idxKonektor += 1;
+                noKonek += 1 ;
             }
         }
 
@@ -812,16 +816,6 @@ public class ExcelService {
                 Double.parseDouble(cp.getKondisiEkonomi().getBiayaInvestasiLahan()), //Double.parseDouble(ps.getParam(l, FormulaEnum.ieikAdd)) * 1000, //550000.0; // param Infrastructure Expense (in kIDR)
         };
 
-//        Integer jumlahKonektor = Integer.valueOf(cp.getParameterTeknis().getJumlahKonektor());
-//        List<Integer> jumlahKonektorList = new ArrayList<>(); //Arrays.asList(50, 43); // TODO
-//        for (int i = 0; i < jumlahKonektor; i+=1) {
-//            jumlahKonektorList.add(0); // TODO
-//        }
-
-
-//        Integer stYear = Integer.parseInt(cp.getYears().getStartYear()); //2020;
-//        Integer edYear = Integer.parseInt(cp.getYears().getFinishYear()); //2030;
-
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Kalkulasi");
 
@@ -884,6 +878,7 @@ public class ExcelService {
                 null, null);
         accountingStyle.setDataFormat(accountingFmt.getFormat("_(* #,##0.00_);_(* (#,##0.00);_(* \"-\"??_);_(@_)"));
         efs.createCell(sheet, 5, 7, null, accountingStyle, 3000);
+        efs.createCell(sheet, 11, 7, null, accountingStyle, 3000);
         efs.createCell(sheet, 12, 7, null, accountingStyle, 3000);
 
         // konektor
@@ -906,13 +901,16 @@ public class ExcelService {
             List<ReqKonektor> konektors = kwhKonektor.getKonektor();
             konektors.sort(Comparator.comparing(ReqKonektor::getNo));
 
+            int noKonek = 1;
+
             for (ReqKonektor konek : konektors) {
                 Cell konektorParamCell = efs.createCell(sheet, startRowKonektor, 2, null, column1CellStyle, null);
-                konektorParamCell.setCellValue(">> (EVSE " + kwhKonektor.getEvse() + ") Spesifikasi daya luaran konektor " + idxKonektor + " (kW)");
+                konektorParamCell.setCellValue(">> (EVSE " + kwhKonektor.getEvse() + ") Spesifikasi daya luaran konektor " + noKonek + " (kW)");
                 Cell konektorValueCell = efs.createCell(sheet, startRowKonektor, 3, null, centerStyle, null);
                 konektorValueCell.setCellValue(konek.getValue());
                 startRowKonektor += 1;
                 idxKonektor += 1;
+                noKonek += 1;
             }
         }
 

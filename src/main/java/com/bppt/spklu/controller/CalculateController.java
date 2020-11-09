@@ -57,6 +57,7 @@ public class CalculateController extends CommonController {
                 if (typeOptimize.equals("rasio-harga-listrik-pln")) return fs.optRasioHargaListrikPln(cp);
                 if (typeOptimize.equals("rasio-tarif-jual-spklu")) return fs.optRasioHargaJualKonsumen(cp);
                 if (typeOptimize.equals("biaya-sewa-lahan")) return fs.optBiayaSewaLahan(cp);
+                if (typeOptimize.equals("subsidi-energi")) return fs.optSubsidiEnergi(cp);
                 return null;
             });
         else return res(req, res, cp, () -> {
