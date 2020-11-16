@@ -187,8 +187,8 @@ public class FormulaService {
     }
 
     public ResultOptimize optRasioHargaListrikPln(CalculateParameter cp) {
-        Double max = new Double(2);
-        Double min = new Double(0.8);
+        Double max = new Double(100);
+        Double min = new Double(0);
         Double lastMax = new Double(0);
         while (true){
             cp.getParameterBisnis().setHargaJualPln(min.toString());
@@ -197,14 +197,14 @@ public class FormulaService {
                 if(min > max){
                     lastMax = new Double(2);
                 }else{
-                    lastMax = (min > 0.8) ? min - 0.1 : 0.8;
+                    lastMax = (min > 0) ? min - 0.1 : 0;
                 }
                 break;
             }
             min += 0.1;
         }
 
-        if(lastMax < max && lastMax > 0.8){
+        if(lastMax < max && lastMax > 0){
             lastMax += 0.09;
             while (true){
                 cp.getParameterBisnis().setHargaJualPln(lastMax.toString());
@@ -223,7 +223,7 @@ public class FormulaService {
     }
 
     public ResultOptimize optRasioHargaJualKonsumen(CalculateParameter cp) {
-        Double max = new Double(1.5);
+        Double max = new Double(100);
         Double min = new Double(0);
         Double lastMax = new Double(0);
         while (true){

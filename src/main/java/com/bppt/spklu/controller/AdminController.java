@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -38,5 +39,8 @@ public class AdminController extends CommonController {
         return res(req, res, mainFormValue, () -> mainFormValueService.save(mainFormValue));
     }
 
-
+    @PostMapping("/form-values")
+    public ResponseEntity saveFormValues(HttpServletRequest req, HttpServletResponse res, @RequestBody List<MainFormValue> mainFormValue) {
+        return res(req, res, mainFormValue, () -> mainFormValueService.saves(mainFormValue));
+    }
 }
