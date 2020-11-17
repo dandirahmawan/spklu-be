@@ -76,15 +76,20 @@ public class CalculateController extends CommonController {
     public ResponseEntity generateExcel(HttpServletRequest req, HttpServletResponse res, @RequestBody CalculateParameter cp,
                                         @Param("formula") Boolean formula) {
         return res(req, res, cp, () -> {
+
+            List<MainParameter> l = ps.getParameters();
+            String url = ps.getParam(l, FormulaEnum.endpointUrl);
+
             String r = "";
             try {
                 String n = "";
                 if (formula != null && formula) n = excelService.generate(cp);
                 else n = excelService.generateWOFormula(cp);
-                r = ServletUriComponentsBuilder.fromCurrentContextPath()
-                        .path("/api/download/")
-                        .path(n)
-                        .toUriString();
+//                r = ServletUriComponentsBuilder.fromCurrentContextPath()
+//                        .path("/api/download/")
+//                        .path(n)
+//                        .toUriString();
+                r = url + "/api/download/" + n;
             } catch (IOException e) {
                 e.printStackTrace();
             }
