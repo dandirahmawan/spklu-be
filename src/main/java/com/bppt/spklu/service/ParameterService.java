@@ -59,6 +59,8 @@ public class ParameterService {
             key = "bep";
         if (fe == FormulaEnum.dirTemp)
             key = "dirTemp";
+        if (fe == FormulaEnum.endpointUrl)
+            key = "endpointUrl";
 
         String finalKey = key + "";
         String mp = list.stream().filter(e -> finalKey.equalsIgnoreCase(e.getKey())).findFirst().map(MainParameter::getValue).orElse("0.0");
