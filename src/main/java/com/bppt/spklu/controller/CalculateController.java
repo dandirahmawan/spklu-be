@@ -54,10 +54,11 @@ public class CalculateController extends CommonController {
             return res(req, res, cp, () -> {
                 if (typeOptimize.equals("harga-evse")) return fs.optHargaEvse(cp);
                 if (typeOptimize.equals("rasio-spklu")) return fs.optRasioSpklu(cp);
-                if (typeOptimize.equals("rasio-harga-listrik-pln")) return fs.optRasioHargaListrikPln(cp);
-                if (typeOptimize.equals("rasio-tarif-jual-spklu")) return fs.optRasioHargaJualKonsumen(cp);
+                if (typeOptimize.equals("rasio-harga-listrik-pln")) return fs.optRasioHargaListrikPln(cp, new Double(0), new Double(100));
+                if (typeOptimize.equals("rasio-tarif-jual-spklu")) return fs.optRasioHargaJualKonsumen(cp, new Double(0), new Double(100));
                 if (typeOptimize.equals("biaya-sewa-lahan")) return fs.optBiayaSewaLahan(cp);
                 if (typeOptimize.equals("subsidi-energi")) return fs.optSubsidiEnergi(cp);
+                if (typeOptimize.equals("npv-maksimum")) return fs.optNpvMaksimum(cp);
                 return null;
             });
         else return res(req, res, cp, () -> {
