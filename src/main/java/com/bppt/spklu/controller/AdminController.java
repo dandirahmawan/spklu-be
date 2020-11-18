@@ -25,12 +25,14 @@ public class AdminController extends CommonController {
     @GetMapping("/form-value")
     public ResponseEntity getAllFormValue(HttpServletRequest req, HttpServletResponse res) {
         req.setAttribute("isSecure", false);
+        req.setAttribute("isWithoutUserType", false);
         return res(req, res, null, mainFormValueService::getAll);
     }
 
     @GetMapping("/form-value/{name}")
     public ResponseEntity getOneByNameFormValue(HttpServletRequest req, HttpServletResponse res, @PathVariable String name) {
         req.setAttribute("isSecure", false);
+        req.setAttribute("isWithoutUserType", false);
         return res(req, res, null, () -> mainFormValueService.getOneByName(name));
     }
 

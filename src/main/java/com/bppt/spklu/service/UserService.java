@@ -70,4 +70,12 @@ public class UserService {
         }
     }
 
+    public String getUsernameByToken(String token) {
+        try {
+            return CryptoService.getUserPass(token)[0];
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 }

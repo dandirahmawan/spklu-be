@@ -2,6 +2,7 @@ package com.bppt.spklu.controller;
 
 import com.bppt.spklu.config.ResErrExc;
 import com.bppt.spklu.entity.TranTracking;
+import com.bppt.spklu.entity.UserType;
 import com.bppt.spklu.model.ResponseRest;
 import com.bppt.spklu.service.TranTrackingService;
 import com.bppt.spklu.service.UserService;
@@ -29,8 +30,9 @@ public abstract class CommonController {
     protected <T> ResponseEntity res(HttpServletRequest req, HttpServletResponse res, Object body, SupplierRes<T> func) {
         String ipAddress = req.getRemoteHost();
         String uri = req.getServletPath();
-        String jsonBody = "";
-        String user = "";
+        String jsonBody = null;
+        String token = req.getHeader("token");
+        String userType = req.getHeader("user-type");
 
         if (body != null) {
             try {
@@ -45,9 +47,16 @@ public abstract class CommonController {
             TranTracking t = new TranTracking();
             t.setCreateDate(new Date());
             t.setIpAddress(ipAddress);
-            t.setRequestBody(jsonBody);
             t.setRequestUri(uri);
-            t.setUser(user);
+
+            if (jsonBody != null) t.setRequestBody(jsonBody);
+            String user;
+            if (token != null && userService.validToken(token)) {
+                user = userService.getUsernameByToken(token);
+                t.setUser(user);
+            }
+            if (userType != null) t.setUserType(new UserType(Integer.parseInt(userType)));
+
             tranTrackingService.save(t);
         } catch (Exception e) {
             e.printStackTrace();
@@ -56,14 +65,20 @@ public abstract class CommonController {
         boolean isSecure = req.getAttribute("isSecure") != null
                 && req.getAttribute("isSecure").toString().equalsIgnoreCase("false") ?
                 false : true;
+        boolean isWithoutUserType = req.getAttribute("isWithoutUserType") != null
+                && req.getAttribute("isWithoutUserType").toString().equalsIgnoreCase("false") ?
+                false : true;
 
         if (isSecure()) {
-            String token = req.getHeader("token");
-            if (!isSecure || (token != null && userService.validToken(token))) return surroundProcess(func);
-            else {
-                ResponseRest<T> r = new ResponseRest<T>("invalid token", false, null);
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(r);
+            if (!isSecure) {
+                if (!isWithoutUserType) return surroundProcess(func);
+                else {
+                    if (userType != null) return surroundProcess(func);
+                }
+            } else {
+                if (token != null && userService.validToken(token)) return surroundProcess(func);
             }
+            return unauthorized();
         } else {
             return surroundProcess(func);
         }
@@ -81,6 +96,11 @@ public abstract class CommonController {
             r = new ResponseRest<T>(resErrExc.getMsg(), false, null);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(r);
         }
+    }
+
+    private <T> ResponseEntity unauthorized() {
+        ResponseRest<T> r = new ResponseRest<T>("invalid token or user type", false, null);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(r);
     }
 
     @FunctionalInterface

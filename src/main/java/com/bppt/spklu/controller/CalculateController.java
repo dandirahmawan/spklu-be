@@ -36,7 +36,7 @@ public class CalculateController extends CommonController {
 
     @Override
     protected boolean isSecure() {
-        return false;
+        return true;
     }
 
     @Autowired
@@ -44,12 +44,14 @@ public class CalculateController extends CommonController {
 
     @PostMapping("/ori")
     public ResponseEntity calculate(HttpServletRequest req, HttpServletResponse res, @RequestBody CalculateParameter cp) {
+        req.setAttribute("isSecure", false);
         return res(req, res, cp, () -> fs.genFormula(cp).getResponseCalculate());
     }
 
     @PostMapping
     public ResponseEntity calculateE(HttpServletRequest req, HttpServletResponse res, @RequestBody CalculateParameter cp,
                                      @Param("optimize") Boolean optimize, @Param("typeOptimize") String typeOptimize) {
+        req.setAttribute("isSecure", false);
         if (optimize != null && optimize && typeOptimize != null)
             return res(req, res, cp, () -> {
                 if (typeOptimize.equals("harga-evse")) return fs.optHargaEvse(cp);
@@ -74,8 +76,8 @@ public class CalculateController extends CommonController {
     @PostMapping("/excel")
     public ResponseEntity generateExcel(HttpServletRequest req, HttpServletResponse res, @RequestBody CalculateParameter cp,
                                         @Param("formula") Boolean formula) {
+        req.setAttribute("isSecure", false);
         return res(req, res, cp, () -> {
-
             List<MainParameter> l = ps.getParameters();
             String url = ps.getParam(l, FormulaEnum.endpointUrl);
 

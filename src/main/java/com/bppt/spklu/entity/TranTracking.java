@@ -23,4 +23,8 @@ public class TranTracking {
     private String requestBody;
     private String user;
 
+    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_type_id")
+    private UserType userType;
+
 }
