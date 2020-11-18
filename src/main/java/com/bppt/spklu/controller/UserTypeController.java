@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @RestController
-@RequestMapping("/api/user-type")
+@RequestMapping({"/api/user-type", "/api/user_type"})
 public class UserTypeController extends CommonController {
 
 

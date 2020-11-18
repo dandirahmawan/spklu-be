@@ -186,21 +186,40 @@ public class FormulaService {
         return opt;
     }
 
-    public ResultOptimize optRasioHargaListrikPln(CalculateParameter cp) {
-        Double max = new Double(100);
-        Double min = new Double(0);
+    public ResultOptimize optRasioHargaListrikPln(CalculateParameter cp, Double minPar, Double maxPar) {
+        System.out.println("minimum parameter harga jual : "+minPar);
+        Double max = (maxPar == 0) ? new Double(100) : maxPar;
+        Double min = (minPar == 0) ? new Double(0) : minPar;
         Double lastMax = new Double(0);
         while (true){
             cp.getParameterBisnis().setHargaJualPln(min.toString());
             Double pp = Double.parseDouble(fs.genFormula(cp).getPaybackPeriod());
-            if(pp > 3.5 || min > max) {
-                if(min > max){
-                    lastMax = new Double(2);
-                }else{
-                    lastMax = (min > 0) ? min - 0.1 : 0;
+            System.out.println("last parameter pln "+lastMax);
+            System.out.println("min "+min);
+            System.out.println("max "+max);
+            System.out.println("last max : "+lastMax);
+            System.out.println("pp "+pp);
+            System.out.println("----------------------------");
+            if(minPar > 0){
+                if(pp > 3.5 || min > max || lastMax < min) {
+                    if(min > max){
+                        lastMax = maxPar;
+                    }else{
+                        lastMax = (min > minPar) ? min - 0.1 : minPar;
+                    }
+                    break;
                 }
-                break;
+            }else {
+                if(pp > 3.5 || min > max) {
+                    if(min > max){
+                        lastMax = maxPar;
+                    }else{
+                        lastMax = (min > 0) ? min - 0.1 : 0;
+                    }
+                    break;
+                }
             }
+
             min += 0.1;
         }
 
@@ -209,8 +228,9 @@ public class FormulaService {
             while (true){
                 cp.getParameterBisnis().setHargaJualPln(lastMax.toString());
                 Double pp = Double.parseDouble(fs.genFormula(cp).getPaybackPeriod());
-                System.out.println("strt : "+lastMax);
-                if(pp <= 3.5) break;
+                System.out.println("strt    : "+lastMax);
+                System.out.println("min     : "+minPar);
+                if(pp <= 3.5 || lastMax < minPar) break;
                 lastMax -= 0.01;
             }
         }
@@ -222,9 +242,9 @@ public class FormulaService {
         return opt;
     }
 
-    public ResultOptimize optRasioHargaJualKonsumen(CalculateParameter cp) {
-        Double max = new Double(100);
-        Double min = new Double(0);
+    public ResultOptimize optRasioHargaJualKonsumen(CalculateParameter cp, Double minPar, Double maxPar) {
+        Double max = (maxPar == 0) ? new Double(100) : maxPar;
+        Double min = (minPar == 0) ? new Double(0) : minPar;
         Double lastMax = new Double(0);
         while (true){
             cp.getParameterBisnis().setHargaJualKonsumen(min.toString());
@@ -235,7 +255,7 @@ public class FormulaService {
                 if(min > max){
                     lastMax = new Double(1.5);
                 }else{
-                    lastMax = (min > 0) ? min : 0;
+                    lastMax = (min > minPar) ? min : minPar;
                 }
                 break;
             }
@@ -378,6 +398,19 @@ public class FormulaService {
         opt.setRequestCalculate(cp);
         opt.setResponseCalculate(fs.genFormula(cp).getResponseCalculate());
         return opt;
+    }
+
+    public ResultOptimize optNpvMaksimum(CalculateParameter cp){
+        log.info("starting calculate optimize npv maksimum");
+        CalculateParameter cpLast = new CalculateParameter();
+        ResultOptimize pln = this.optRasioHargaListrikPln(cp, 0.8, 2.0);
+        cpLast = pln.getRequestCalculate();
+
+        ResultOptimize konsumen = this.optRasioHargaJualKonsumen(cpLast, new Double(0), 1.5);
+        cpLast = konsumen.getRequestCalculate();
+
+        ResultOptimize rasio = this.optRasioSpklu(cpLast);
+        return rasio;
     }
 
     @Autowired
