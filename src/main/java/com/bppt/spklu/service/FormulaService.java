@@ -444,7 +444,7 @@ public class FormulaService {
         Double ieikDiv = Double.parseDouble(ps.getParam(l, FormulaEnum.ieikDiv)); //1000.0; // param Infrastructure Expense (in kIDR)
 
         Double bo = Double.parseDouble(ps.getParam(l, FormulaEnum.bo)); //0.02; // param Biaya Operasional *)
-        Double bsl = Double.parseDouble(cp.getParameterBisnis().getBiayaSewaLahan()); //0.0; // Biaya Sewa Lahan TODO
+        Double bsl = Double.parseDouble(cp.getParameterBisnis().getBiayaSewaLahan()) / 1000; //0.0; // Biaya Sewa Lahan TODO
 
         Double bp = Double.parseDouble(ps.getParam(l, FormulaEnum.bp)); //0.02; // param Biaya Pemasaran
 

@@ -485,7 +485,7 @@ public class ExcelService {
         for (int i = 0; i < LEN_COL_CALC; i += 1) {
             Cell cell = efs.createCell(sheet, boRow, ST_COL_CALC, null, accountingStyle, null);
             cell.setCellType(CellType.FORMULA);
-            cell.setCellFormula("(" + bo + "*" + efs.getIndexCol(ST_COL_CALC) + ieikRow +")-($G$11*" + efs.getIndexCol(ST_COL_CALC)+ jsRow + ")"); // =(0.02*C40)+($G$11*C24) // + => -
+            cell.setCellFormula("(" + bo + "*" + efs.getIndexCol(ST_COL_CALC) + ieikRow +")-(($G$11 / 1000)*" + efs.getIndexCol(ST_COL_CALC)+ jsRow + ")"); // =(0.02*C40)+($G$11*C24) // + => -
             ST_COL_CALC += 1;
         }
 
