@@ -14,6 +14,7 @@ public class InterceptorConfig implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         log.info("access from ip={}", request.getRemoteHost());
+        log.info("access from x-fw={}", request.getHeader("X-Forwarded-For"));
         return true;
     }
 
