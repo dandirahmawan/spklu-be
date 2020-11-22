@@ -177,7 +177,7 @@ public class ExcelService {
         }
 
         // Discount Rate
-        int drRow = 10 + idxKonektor + 1; //jumlahKonektorList.size() + 1;
+        int drRow = 10 + listKonektor.size() + 2; //idxKonektor + 1; //jumlahKonektorList.size() + 1;
         Double dr = Double.parseDouble(cp.getKondisiEkonomi().getDiscountRate()) / 100; //0.13; // Discount Rate
         CellStyle percentPlace1Style = efs.cellStyle(workbook, false, false, null, null);
         percentPlace1Style.setDataFormat(percentFmt.getFormat("0.0%"));
@@ -188,7 +188,7 @@ public class ExcelService {
         drValCell.setCellValue(dr);
 
         // Tax
-        int txRow = 10 + listKonektor.size() + 2; //jumlahKonektorList.size() + 2;
+        int txRow = 10 + listKonektor.size() + 3; //jumlahKonektorList.size() + 2;
         Double tax = Double.parseDouble(cp.getKondisiEkonomi().getPph()) / 100; //0.25; // Tax
 
         Cell txCell = efs.createCell(sheet, txRow, 2, null, null, null);
@@ -197,7 +197,7 @@ public class ExcelService {
         txValCell.setCellValue(tax);
 
         // Inflation Rate
-        int irRow = 10 + listKonektor.size() + 3; //jumlahKonektorList.size() + 3;
+        int irRow = 10 + listKonektor.size() + 4; //jumlahKonektorList.size() + 3;
         Double ir = Double.parseDouble(cp.getKondisiEkonomi().getInflasi()) / 100; //0.035; // Inflation Rate
 
         Cell irCell = efs.createCell(sheet, irRow, 2, null, null, null);
@@ -485,7 +485,7 @@ public class ExcelService {
         for (int i = 0; i < LEN_COL_CALC; i += 1) {
             Cell cell = efs.createCell(sheet, boRow, ST_COL_CALC, null, accountingStyle, null);
             cell.setCellType(CellType.FORMULA);
-            cell.setCellFormula("(" + bo + "*" + efs.getIndexCol(ST_COL_CALC) + ieikRow +")-($G$11*" + efs.getIndexCol(ST_COL_CALC)+ jsRow + ")"); // =(0.02*C40)+($G$11*C24) // + => -
+            cell.setCellFormula("(" + bo + "*" + efs.getIndexCol(ST_COL_CALC) + ieikRow +")-(($G$11 / 1000)*" + efs.getIndexCol(ST_COL_CALC)+ jsRow + ")"); // =(0.02*C40)+($G$11*C24) // + => -
             ST_COL_CALC += 1;
         }
 
@@ -915,7 +915,7 @@ public class ExcelService {
         }
 
         // Discount Rate
-        int drRow = 10 + idxKonektor + 1; //jumlahKonektorList.size() + 1;
+        int drRow = 10 + listKonektor.size() + 2; //jumlahKonektorList.size() + 1;
         Double dr = Double.parseDouble(cp.getKondisiEkonomi().getDiscountRate()) / 100; //0.13; // Discount Rate
         CellStyle percentPlace1Style = efs.cellStyle(workbook, false, false, null, null);
         percentPlace1Style.setDataFormat(percentFmt.getFormat("0.0%"));
@@ -926,7 +926,7 @@ public class ExcelService {
         drValCell.setCellValue(dr);
 
         // Tax
-        int txRow = 10 + listKonektor.size() + 2; //jumlahKonektorList.size() + 2;
+        int txRow = 10 + listKonektor.size() + 3; //jumlahKonektorList.size() + 2;
         Double tax = Double.parseDouble(cp.getKondisiEkonomi().getPph()) / 100; //0.25; // Tax
 
         Cell txCell = efs.createCell(sheet, txRow, 2, null, null, null);
@@ -935,7 +935,7 @@ public class ExcelService {
         txValCell.setCellValue(tax);
 
         // Inflation Rate
-        int irRow = 10 + listKonektor.size() + 3; //jumlahKonektorList.size() + 3;
+        int irRow = 10 + listKonektor.size() + 4; //jumlahKonektorList.size() + 3;
         Double ir = Double.parseDouble(cp.getKondisiEkonomi().getInflasi()) / 100; //0.035; // Inflation Rate
 
         Cell irCell = efs.createCell(sheet, irRow, 2, null, null, null);
@@ -945,7 +945,7 @@ public class ExcelService {
 
 
         int ST_COL_CALC = 3;
-        int ST_ROW_CALC = 10 + listKonektor.size() + 6;
+        int ST_ROW_CALC = 10 + listKonektor.size() + 7;
 
         CalcOptmz ro = formulaService.genFormula(cp);
 

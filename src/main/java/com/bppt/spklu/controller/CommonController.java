@@ -9,6 +9,7 @@ import com.bppt.spklu.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 
+@Slf4j
 public abstract class CommonController {
 
     protected abstract boolean isSecure();
@@ -28,7 +30,7 @@ public abstract class CommonController {
     private UserService userService;
 
     protected <T> ResponseEntity res(HttpServletRequest req, HttpServletResponse res, Object body, SupplierRes<T> func) {
-        String ipAddress = req.getRemoteHost();
+        String ipAddress = req.getHeader("X-Forwarded-For"); //req.getRemoteHost();
         String uri = req.getServletPath();
         String jsonBody = null;
         String token = req.getHeader("token");
@@ -46,7 +48,10 @@ public abstract class CommonController {
         try {
             TranTracking t = new TranTracking();
             t.setCreateDate(new Date());
-            t.setIpAddress(ipAddress);
+
+            if (ipAddress == null || ipAddress.isEmpty()) t.setIpAddress(req.getRemoteHost());
+            else t.setIpAddress(ipAddress);
+
             t.setRequestUri(uri);
 
             if (jsonBody != null) t.setRequestBody(jsonBody);
@@ -55,7 +60,7 @@ public abstract class CommonController {
                 user = userService.getUsernameByToken(token);
                 t.setUser(user);
             }
-            if (userType != null) t.setUserType(new UserType(Integer.parseInt(userType)));
+            if (userType != null && !userType.isEmpty()) t.setUserType(new UserType(Integer.parseInt(userType)));
 
             tranTrackingService.save(t);
         } catch (Exception e) {
