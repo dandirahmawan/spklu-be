@@ -6,6 +6,7 @@ import com.bppt.spklu.entity.UserType;
 import com.bppt.spklu.model.ReqStatistic;
 import com.bppt.spklu.model.ResGroupUserType;
 import com.bppt.spklu.repo.TranTrackingRepo;
+import com.bppt.spklu.repo.UserTypeRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,9 @@ public class StatisticService {
 
     @Autowired
     private TranTrackingRepo tranTrackingRepo;
+
+    @Autowired
+    private UserTypeRepo userTypeRepo;
 
     public ReqStatistic getBySpecific(ReqStatistic reqStatistic, Integer userTypeId) throws ResErrExc {
         if (reqStatistic.getStartDate() == null
@@ -53,15 +57,23 @@ public class StatisticService {
         } else {
             s = tranTrackingRepo.findBySpecificWoUserType(reqStatistic.getStartDate(),
                     reqStatistic.getEndDate());
-            List<TranTracking> group = s.stream()
-                    .filter(distinctByKey(p -> p.getUserType()))
-                    .collect(Collectors.toList());
+            List<UserType> group = userTypeRepo.findAll();
             group.forEach(e -> {
                 List<TranTracking> grFill = s.stream()
-                        .filter(e1 -> e1.getUserType().getId().equals(e.getUserType().getId()))
+                        .filter(e1 -> e1.getUserType().getId().equals(e.getId()))
                         .collect(Collectors.toList());
-                r.getGroupUserType().add(new ResGroupUserType(grFill.size(), e.getUserType()));
+                r.getGroupUserType().add(new ResGroupUserType(grFill.size(), e));
             });
+//            List<TranTracking> group = s.stream()
+//                    .filter(distinctByKey(p -> p.getUserType()))
+//                    .collect(Collectors.toList());
+//            group.forEach(e -> {
+//                List<TranTracking> grFill = s.stream()
+//                        .filter(e1 -> e1.getUserType().getId().equals(e.getUserType().getId()))
+//                        .collect(Collectors.toList());
+//                r.getGroupUserType().add(new ResGroupUserType(grFill.size(), e.getUserType()));
+//            });
+
 //            s.forEach((e) -> {
 //                Map<UserType, List<TranTracking>> group = s.stream().collect(Collectors.groupingBy(e1 -> e1.getUserType()));
 //                group.forEach((k, v) -> r.getGroupUserType().add(new ResGroupUserType(v.size(), k)));
