@@ -31,7 +31,11 @@ public abstract class CommonController {
 
     protected <T> ResponseEntity res(HttpServletRequest req, HttpServletResponse res, Object body, SupplierRes<T> func) {
         String ipAddress = req.getHeader("X-Forwarded-For"); //req.getRemoteHost();
-        String uri = req.getServletPath();
+
+        String queryParam = "";
+        if (req.getQueryString() != null) queryParam = "?" + req.getQueryString();
+        String uri = req.getServletPath() + queryParam;
+
         String jsonBody = null;
         String token = req.getHeader("token");
         String userType = req.getHeader("user-type");
