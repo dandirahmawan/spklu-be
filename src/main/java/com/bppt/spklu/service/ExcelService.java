@@ -1,11 +1,8 @@
 package com.bppt.spklu.service;
 
 import com.bppt.spklu.constant.FormulaEnum;
-import com.bppt.spklu.model.CalculateParameter;
+import com.bppt.spklu.model.*;
 import com.bppt.spklu.entity.MainParameter;
-import com.bppt.spklu.model.ReqKonektor;
-import com.bppt.spklu.model.ReqKwhKonektor;
-import com.bppt.spklu.model.CalcOptmz;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -794,7 +791,7 @@ public class ExcelService {
         String[] param2 = {
                 "Pertumbuhan Tahunan Kendaraan EV",
                 "Pertumbuhan Tahunan Kendaraan Hybrid EV",
-                "Harga 1 SPKLU",
+//                "Harga 1 SPKLU",
                 "Subsidi energi Persen",
                 "Rasio harga beli listrik PLN (Q, Rp 707 x Q)",
                 "Rasio harga jual listrik SPKLU (N, Rp 1650 x N)",
@@ -802,11 +799,12 @@ public class ExcelService {
                 "Durasi penggunaan EVSE/hari (h)",
                 "Biaya Sewa Lahan",
                 "Biaya investasi lahan dan bangunan",
+
         };
         Double[] value2 = {
                 (Double.parseDouble(cp.getParameterBisnis().getPertumbuhanKblPerTahun()) / 100),
                 0.0, // TODO
-                Double.parseDouble(cp.getKondisiEkonomi().getBiayaSpklu()),
+//                Double.parseDouble(cp.getKondisiEkonomi().getBiayaSpklu()),
                 Double.parseDouble(cp.getKondisiEkonomi().getSubsidiEnergi()) / 100, //0.0,
                 Double.parseDouble(cp.getParameterBisnis().getHargaJualPln()),
                 Double.parseDouble(cp.getParameterBisnis().getHargaJualKonsumen()),
@@ -864,22 +862,49 @@ public class ExcelService {
             startRowParam += 1;
         }
 
-        // set format param
-        DataFormat percentFmt = workbook.createDataFormat();
-        CellStyle percentStyle = efs.cellStyle(workbook, true, false, null, null);
-        percentStyle.setDataFormat(percentFmt.getFormat("0%"));
-        efs.createCell(sheet, 3, 7, null, percentStyle, 3000);
-        efs.createCell(sheet, 4, 7, null, percentStyle, 3000);
-        efs.createCell(sheet, 6, 7, null, percentStyle, 3000);
-        efs.createCell(sheet, 9, 7, null, percentStyle, 3000);
 
         DataFormat accountingFmt = workbook.createDataFormat();
         CellStyle accountingStyle = efs.cellStyle(workbook, false, false,
                 null, null);
         accountingStyle.setDataFormat(accountingFmt.getFormat("_(* #,##0.00_);_(* (#,##0.00);_(* \"-\"??_);_(@_)"));
-        efs.createCell(sheet, 5, 7, null, accountingStyle, 3000);
+
+        for (ReqHargaEvse val : cp.getKondisiEkonomi().getHaraPerEvse()) {
+            Cell keyCell = efs.createCell(sheet, startRowParam, 4, new MergeRowCol(startRowParam, 6), column1CellStyle, null);
+            keyCell.setCellValue("Harga SPKLU (EVSE " + val.getNo() + ")");
+            Cell valCell = efs.createCell(sheet, startRowParam, 7, null, accountingStyle, 3000);
+            valCell.setCellValue(Double.parseDouble(val.getValue()));
+            startRowParam += 1;
+        }
+
+        Cell keyCell = efs.createCell(sheet, startRowParam, 4, new MergeRowCol(startRowParam, 6), column1CellStyle, null);
+        keyCell.setCellValue("Total Harga SPKLU");
+        Cell valCell = efs.createCell(sheet, startRowParam, 7, null, accountingStyle, 3000);
+        valCell.setCellValue(Double.parseDouble(cp.getKondisiEkonomi().getBiayaSpklu()));
+
+        // set format param
+        DataFormat percentFmt = workbook.createDataFormat();
+        CellStyle percentStyle = efs.cellStyle(workbook, true, false, null, null);
+        percentStyle.setDataFormat(percentFmt.getFormat("0%"));
+//        efs.createCell(sheet, 3, 7, null, percentStyle, 3000);
+//        efs.createCell(sheet, 4, 7, null, percentStyle, 3000);
+//        efs.createCell(sheet, 6, 7, null, percentStyle, 3000);
+//        efs.createCell(sheet, 9, 7, null, percentStyle, 3000);
+
+//        efs.createCell(sheet, 5, 7, null, accountingStyle, 3000);
+//        efs.createCell(sheet, 11, 7, null, accountingStyle, 3000);
+//        efs.createCell(sheet, 12, 7, null, accountingStyle, 3000);
+
+        efs.createCell(sheet, 3, 7, null, percentStyle, 3000);
+        efs.createCell(sheet, 4, 7, null, percentStyle, 3000);
+        efs.createCell(sheet, 5, 7, null, percentStyle, 3000);
+        efs.createCell(sheet, 8, 7, null, percentStyle, 3000);
+
+
+        efs.createCell(sheet, 10, 7, null, accountingStyle, 3000);
         efs.createCell(sheet, 11, 7, null, accountingStyle, 3000);
-        efs.createCell(sheet, 12, 7, null, accountingStyle, 3000);
+
+
+
 
         // konektor
         int startRowKonektor = 10;

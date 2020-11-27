@@ -2,6 +2,8 @@ package com.bppt.spklu.model;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class ReqKondisiEkonomi {
 
@@ -12,5 +14,6 @@ public class ReqKondisiEkonomi {
     private String biayaSpklu;
     private String biayaInvestasiLahan;
     private String subsidiEnergi;
+    private List<ReqHargaEvse> haraPerEvse;
 
 }
