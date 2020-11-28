@@ -1,5 +1,6 @@
 package com.bppt.spklu.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -18,6 +19,7 @@ public class MainUser extends BaseEntity {
     @JoinColumn(name = "status_id")
     private MainStatus status;
     private String email;
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone="Asia/Jakarta")
     private Date bod;
 
 }
