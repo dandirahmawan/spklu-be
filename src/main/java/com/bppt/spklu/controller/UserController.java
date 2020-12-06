@@ -60,5 +60,4 @@ public class UserController extends CommonController {
             return userService.disableUser(username, false);
         });
     }
-
 }
