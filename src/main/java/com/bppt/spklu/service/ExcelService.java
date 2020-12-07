@@ -36,7 +36,7 @@ public class ExcelService {
                 "Jumlah Kendaraan Hybrid EV pada tahun baseline",
                 "Frekuensi charging Full EV per hari",
                 "Frekuensi charging Hybrid EV per hari",
-                "Rasio SPKLU Banding BEV, 1:N",
+                "Rasio SPKLU Banding KLBB (Kendaraan Listrik Berbasis Baterai), 1:N",
                 "Kapasitas pengisian 1 kendaraan listrik (kWh)",
                 "Jumlah Konektor",
         };
@@ -58,7 +58,7 @@ public class ExcelService {
                 "Rasio harga beli listrik PLN (Q, Rp 707 x Q)",
                 "Rasio harga jual listrik SPKLU (N, Rp 1650 x N)",
                 "Rugi-rugi dan kebutuhan daya pendukung",
-                "Durasi penggunaan EVSE/hari (h)",
+                "Durasi penggunaan PPKL (Perangkat Pembantu Kendaraan Listrik)/hari (h)",
                 "Biaya Sewa Lahan",
                 "Biaya investasi lahan dan bangunan",
         };
@@ -164,7 +164,7 @@ public class ExcelService {
 
             for (ReqKonektor konek : konektors) {
                 Cell konektorParamCell = efs.createCell(sheet, startRowKonektor, 2, null, column1CellStyle, null);
-                konektorParamCell.setCellValue(">> (EVSE " + kwhKonektor.getEvse() + ") Spesifikasi daya luaran konektor " + noKonek + " (kW)");
+                konektorParamCell.setCellValue(">> (PPKL " + kwhKonektor.getEvse() + ") Spesifikasi daya luaran konektor " + noKonek + " (kW)");
                 Cell konektorValueCell = efs.createCell(sheet, startRowKonektor, 3, null, centerStyle, null);
                 konektorValueCell.setCellValue(konek.getValue());
                 startRowKonektor += 1;
@@ -252,7 +252,7 @@ public class ExcelService {
         // ? Jumlah SPKLU*brp sebenarnya (10% dari jumlah BEV) ==> 4
         int jsRow = ST_ROW_CALC + 4;
         Cell jsCell = efs.createCell(sheet, jsRow, 2, null, null, null);
-        jsCell.setCellValue("   Jumlah SPKLU sebenarnya (% dari jumlah BEV)");
+        jsCell.setCellValue("   Jumlah SPKLU sebenarnya (% dari jumlah KLBB)");
         Double js = Double.parseDouble(ps.getParam(l, FormulaEnum.pkl)); //1.0; // param ? Populasi Kendaraan Listrik
 
         ST_COL_CALC = 3;
@@ -774,7 +774,7 @@ public class ExcelService {
                 "Jumlah Kendaraan Hybrid EV pada tahun baseline",
                 "Frekuensi charging Full EV per hari",
                 "Frekuensi charging Hybrid EV per hari",
-                "Rasio SPKLU Banding BEV, 1:N",
+                "Rasio SPKLU Banding KLBB (Kendaraan Listrik Berbasis Baterai), 1:N",
                 "Kapasitas pengisian 1 kendaraan listrik (kWh)",
                 "Jumlah Konektor",
         };
@@ -796,7 +796,7 @@ public class ExcelService {
                 "Rasio harga beli listrik PLN (Q, Rp 707 x Q)",
                 "Rasio harga jual listrik SPKLU (N, Rp 1650 x N)",
                 "Rugi-rugi dan kebutuhan daya pendukung",
-                "Durasi penggunaan EVSE/hari (h)",
+                "Durasi penggunaan PPKL (Perangkat Pembantu Kendaraan Listrik)/hari (h)",
                 "Biaya Sewa Lahan",
                 "Biaya investasi lahan dan bangunan",
 
@@ -870,7 +870,7 @@ public class ExcelService {
 
         for (ReqHargaEvse val : cp.getKondisiEkonomi().getHaraPerEvse()) {
             Cell keyCell = efs.createCell(sheet, startRowParam, 4, new MergeRowCol(startRowParam, 6), column1CellStyle, null);
-            keyCell.setCellValue("Harga SPKLU (EVSE " + val.getNo() + ")");
+            keyCell.setCellValue("Harga SPKLU (PPKL " + val.getNo() + ")");
             Cell valCell = efs.createCell(sheet, startRowParam, 7, null, accountingStyle, 3000);
             valCell.setCellValue(Double.parseDouble(val.getValue()));
             startRowParam += 1;
@@ -930,7 +930,7 @@ public class ExcelService {
 
             for (ReqKonektor konek : konektors) {
                 Cell konektorParamCell = efs.createCell(sheet, startRowKonektor, 2, null, column1CellStyle, null);
-                konektorParamCell.setCellValue(">> (EVSE " + kwhKonektor.getEvse() + ") Spesifikasi daya luaran konektor " + noKonek + " (kW)");
+                konektorParamCell.setCellValue(">> (PPKL " + kwhKonektor.getEvse() + ") Spesifikasi daya luaran konektor " + noKonek + " (kW)");
                 Cell konektorValueCell = efs.createCell(sheet, startRowKonektor, 3, null, centerStyle, null);
                 konektorValueCell.setCellValue(konek.getValue());
                 startRowKonektor += 1;
@@ -1011,7 +1011,7 @@ public class ExcelService {
         // ? Jumlah SPKLU*brp sebenarnya (10% dari jumlah BEV) ==> 4
         int jsRow = ST_ROW_CALC + 4;
         Cell jsCell = efs.createCell(sheet, jsRow, 2, null, null, null);
-        jsCell.setCellValue("   Jumlah SPKLU sebenarnya (% dari jumlah BEV)");
+        jsCell.setCellValue("   Jumlah SPKLU sebenarnya (% dari jumlah KLBB)");
 
         ST_COL_CALC = 3;
         for (String r : ro.getResponseCalculate().getJs()) {
