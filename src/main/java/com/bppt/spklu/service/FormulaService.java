@@ -1,11 +1,8 @@
 package com.bppt.spklu.service;
 
 import com.bppt.spklu.constant.FormulaEnum;
-import com.bppt.spklu.model.CalculateParameter;
+import com.bppt.spklu.model.*;
 import com.bppt.spklu.entity.MainParameter;
-import com.bppt.spklu.model.CalcOptmz;
-import com.bppt.spklu.model.ResponseCalculate;
-import com.bppt.spklu.model.ResultOptimize;
 import com.bppt.spklu.repo.MainParameterRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.util.NumberToTextConverter;
@@ -402,15 +399,30 @@ public class FormulaService {
 
     public ResultOptimize optNpvMaksimum(CalculateParameter cp){
         log.info("starting calculate optimize npv maksimum");
-        CalculateParameter cpLast = new CalculateParameter();
-        ResultOptimize pln = this.optRasioHargaListrikPln(cp, 0.8, 2.0);
-        cpLast = pln.getRequestCalculate();
+        cp.getParameterBisnis().setHargaJualPln("0.8");
+        cp.getParameterBisnis().setHargaJualKonsumen("1.5");
 
-        ResultOptimize konsumen = this.optRasioHargaJualKonsumen(cpLast, new Double(0), 1.5);
-        cpLast = konsumen.getRequestCalculate();
+        Double k = new Double(cp.getParameterTeknis().getKapasitasKbl());
+        Double d = new Double(cp.getParameterBisnis().getPenggunaanEvsePerJam());
+        List<ReqKwhKonektor> pList = cp.getParameterTeknis().getKwhPerKonektor();
 
-        ResultOptimize rasio = this.optRasioSpklu(cpLast);
-        return rasio;
+
+        //get max rasio spklu : bev as e
+        Double totalDaya = new Double(0);
+        for(int i = 0;i<pList.size();i++){
+            List<ReqKonektor> rkList = pList.get(i).getKonektor();
+            for(int x = 0;x<rkList.size();x++){
+                Double value = rkList.get(x).getValue();
+                totalDaya += value;
+            }
+        }
+        Double e =  Math.floor((totalDaya * d) / k);
+        cp.getParameterBisnis().setRasioSpklu(e.toString());
+
+        ResultOptimize opt = new ResultOptimize();
+        opt.setRequestCalculate(cp);
+        opt.setResponseCalculate(fs.genFormula(cp).getResponseCalculate());
+        return opt;
     }
 
     @Autowired
