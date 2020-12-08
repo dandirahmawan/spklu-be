@@ -446,7 +446,7 @@ public class ExcelService {
         int bosRow = ST_ROW_CALC + 18;
         Cell bosCell = efs.createCell(sheet, bosRow, 2, null, null, null);
         bosCell.setCellValue("   Biaya Operasi SPKLU, Gaji Pegawai Pertahun");
-        Double bos = Double.parseDouble(ps.getParam(l, FormulaEnum.bos)); //57600.0; // param Biaya Operasi SPKLU, Gaji Pegawai Pertahun
+        Double bos = Double.parseDouble(cp.getParameterBisnis().getGajiPerSpklu()) / 1000; //Double.parseDouble(ps.getParam(l, FormulaEnum.bos)); //57600.0; // param Biaya Operasi SPKLU, Gaji Pegawai Pertahun
 
         ST_COL_CALC = 3;
         for (int i = 0; i < LEN_COL_CALC; i += 1) {
@@ -476,7 +476,7 @@ public class ExcelService {
         int boRow = ST_ROW_CALC + 20;
         Cell boCell = efs.createCell(sheet, boRow, 2, null, null, null);
         boCell.setCellValue("   Biaya Operasional");
-        Double bo = Double.parseDouble(ps.getParam(l, FormulaEnum.bo)); //0.02; // param Biaya Operasional *)
+        Double bo = Double.parseDouble(cp.getParameterBisnis().getBiayaOperasional()) / 100; //Double.parseDouble(ps.getParam(l, FormulaEnum.bo)); //0.02; // param Biaya Operasional *)
 
         ST_COL_CALC = 3;
         for (int i = 0; i < LEN_COL_CALC; i += 1) {
@@ -490,7 +490,7 @@ public class ExcelService {
         int bpRow = ST_ROW_CALC + 21;
         Cell bpCell = efs.createCell(sheet, bpRow, 2, null, null, null);
         bpCell.setCellValue("   Biaya Pemasaran");
-        Double bp = Double.parseDouble(ps.getParam(l, FormulaEnum.bp)); //0.02; // param Biaya Pemasaran
+        Double bp = Double.parseDouble(cp.getParameterBisnis().getBiayaPemasaran()) / 100; //Double.parseDouble(ps.getParam(l, FormulaEnum.bp)); //0.02; // param Biaya Pemasaran
 
         ST_COL_CALC = 3;
         for (int i = 0; i < LEN_COL_CALC; i += 1) {
@@ -504,13 +504,14 @@ public class ExcelService {
         int bttRow = ST_ROW_CALC + 22;
         Cell bttCell = efs.createCell(sheet, bttRow, 2, null, null, null);
         bttCell.setCellValue("   Biaya Tak Terduga");
-        Double btt = Double.parseDouble(ps.getParam(l, FormulaEnum.btt)); //100000.0; // param Biaya Tak Terduga
+        Double btt = Double.parseDouble(cp.getParameterBisnis().getBiayaTakTerduga()) / 100; //Double.parseDouble(ps.getParam(l, FormulaEnum.btt)); //100000.0; // param Biaya Tak Terduga
 
         ST_COL_CALC = 3;
         for (int i = 0; i < LEN_COL_CALC; i += 1) {
             Cell cell = efs.createCell(sheet, bttRow, ST_COL_CALC, null, accountingStyle, null);
             cell.setCellType(CellType.FORMULA);
-            cell.setCellFormula("-" + btt); // =-100000
+//            cell.setCellFormula("-" + btt); // =-100000
+            cell.setCellFormula("$" + efs.getIndexCol(ST_COL_CALC) + ieikAdd + "*" + btt); //=$C40*0.005
             ST_COL_CALC += 1;
         }
 

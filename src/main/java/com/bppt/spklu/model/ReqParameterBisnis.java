@@ -12,4 +12,10 @@ public class ReqParameterBisnis {
     private String biayaSewaLahan;
     private String penggunaanEvsePerJam;
 
+    private String biayaOperasional;
+    private String biayaPemasaran;
+    private String biayaTakTerduga;
+    private String gajiPerSpklu;
+
+
 }

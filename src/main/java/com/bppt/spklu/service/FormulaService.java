@@ -443,12 +443,12 @@ public class FormulaService {
         Double ieikAdd = Double.parseDouble(cp.getKondisiEkonomi().getBiayaInvestasiLahan()) / 1000; //Double.parseDouble(ps.getParam(l, FormulaEnum.ieikAdd)); //550000.0; // param Infrastructure Expense (in kIDR)
         Double ieikDiv = Double.parseDouble(ps.getParam(l, FormulaEnum.ieikDiv)); //1000.0; // param Infrastructure Expense (in kIDR)
 
-        Double bo = Double.parseDouble(ps.getParam(l, FormulaEnum.bo)); //0.02; // param Biaya Operasional *)
+        Double bo = Double.parseDouble(cp.getParameterBisnis().getBiayaOperasional()) / 100; //Double.parseDouble(ps.getParam(l, FormulaEnum.bo)); //0.02; // param Biaya Operasional *)
         Double bsl = Double.parseDouble(cp.getParameterBisnis().getBiayaSewaLahan()) / 1000; //0.0; // Biaya Sewa Lahan TODO
 
-        Double bp = Double.parseDouble(ps.getParam(l, FormulaEnum.bp)); //0.02; // param Biaya Pemasaran
+        Double bp = Double.parseDouble(cp.getParameterBisnis().getBiayaPemasaran()) / 100; //Double.parseDouble(ps.getParam(l, FormulaEnum.bp)); //0.02; // param Biaya Pemasaran
 
-        Double btt = Double.parseDouble(ps.getParam(l, FormulaEnum.btt)); //100000.0; // param Biaya Tak Terduga
+        Double btt = Double.parseDouble(cp.getParameterBisnis().getBiayaTakTerduga()) / 100; //Double.parseDouble(ps.getParam(l, FormulaEnum.btt)); //100000.0; // param Biaya Tak Terduga
 
         Double kpkl = Double.parseDouble(cp.getParameterTeknis().getKapasitasKbl()); //25.0; // Kapasitas pengisian 1 kendaraan listrik (kWh)
         Double keh = Double.parseDouble(ps.getParam(l, FormulaEnum.keh)); //1.0; // param Kebutuhan Energi harian (KWH)
@@ -462,7 +462,7 @@ public class FormulaService {
 
         Double bet = Double.parseDouble(ps.getParam(l, FormulaEnum.bet)); //365.0; // param Biaya Energy Tahunan
 
-        Double bos = Double.parseDouble(ps.getParam(l, FormulaEnum.bos)); //57600.0; // param Biaya Operasi SPKLU, Gaji Pegawai Pertahun
+        Double bos = Double.parseDouble(cp.getParameterBisnis().getGajiPerSpklu()) / 1000; //Double.parseDouble(ps.getParam(l, FormulaEnum.bos)); //57600.0; // param Biaya Operasi SPKLU, Gaji Pegawai Pertahun
 
         Double jkhev = 0.0; // Jumlah Kendaraan Hybrid EV pada tahun baseline TODO
         Double pkhg = Double.parseDouble(ps.getParam(l, FormulaEnum.pkhg)); //1.0; // param ? Populasi Kendaraan Hybrid (Gaikindo)
@@ -498,7 +498,7 @@ public class FormulaService {
 
         List<Double> boRes = boRes(bo, ieikRes, bsl, jsRes);
         List<Double> bpRes = bpRes(bp, ieikRes);
-        List<Double> bttRes = bttRes(btt, length);
+        List<Double> bttRes = bttRes(btt, length, ieikRes);
         List<Double> kehRes = kehRes(jsRes, rsbb, kpkl, keh, rdkdp);
         List<Double> heRes = heRes(heMtp, rhblp, heMin, sep, heMtpN, length);
         List<Double> betRes = betRes(kehRes, heRes, bet);
@@ -634,10 +634,11 @@ public class FormulaService {
     }
 
     // Biaya Tak Terduga
-    public List<Double> bttRes(Double btt, int length) {
+    public List<Double> bttRes(Double btt, int length, List<Double> ieikRes) {
         List<Double> result = new ArrayList<>();
         for (int i = 0; i <= length; i++) {
-            result.add(-btt);
+//            result.add(-btt);
+            result.add(btt * ieikRes.get(0));
         }
         return result;
     }
